@@ -1,4 +1,4 @@
-[![Discord](https://i.imgur.com/AWqUL0x.png)](https://discord.gg/bGMxSxUFRC) [![Discord](https://i.imgur.com/OcOyprP.png)](https://discord.gg/bGMxSxUFRC)
+[![Discord](https://i.imgur.com/AWqUL0x.png)](https://discord.gg/bGMxSxUFRC) [![Discord](https://i.imgur.com/OcOyprP.png)](https://discord.com/api/oauth2/authorize?client_id=971879814287990784&permissions=286085146704&scope=bot%20applications.commands)
 
 # ![Logo](https://i.imgur.com/VLvOEwo.png) Ancients Reborn Minion
 
