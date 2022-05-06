@@ -16,20 +16,7 @@ To suggest a new feature, [click here](https://github.com/discordwolf-bots/ancie
 
 ### Contributors
 
--   [[Ciaran](https://github.com/ciaranlangton)]
--   [[Devin](https://github.com/devin8)]
--   [[ms813](https://github.com/ms813)]
--   [[Alexsuperfly](alexsuperfly)]
--   [[Umdlye](https://github.com/umdlye)]
--   [[Kyra](https://github.com/kyranet)]
--   [[Wyatt](https://github.com/wyattos)]
--   [[coolbop32](https://github.com/coolbop32)]
--   [[duracell33](https://github.com/duracell33)]
--   [[themrrobert](https://github.com/themrrobert)]
--   [[Fishy](https://github.com/Lajnux)]
--   [[Lilylicious](https://github.com/Lilylicious)]
--   [[Gidedin](https://github.com/imgidedin)]
--   [[Andre](https://github.com/ard35)]
+-   [[DiscordWolf](https://github.com/discordwolf-bots)]
 
 ## Notes
 
