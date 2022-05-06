@@ -2,155 +2,64 @@ import { Emoji } from '../../constants';
 import itemID from '../../util/itemID';
 import { Log, SkillsEnum } from '../types';
 
-const logs: Log[] = [
+const Logs: Log[] = [
 	{
 		level: 1,
+		xp: 5,
+		id: itemID('Farwood Log'),
+		name: 'Farwood',
+		cbRequired: 1
+	},
+	{
+		level: 10,
+		xp: 10,
+		id: itemID('Gnarlwood Log'),
+		name: 'Gnarwood',
+		cbRequired: 1
+	},
+	{
+		level: 20,
+		xp: 15,
+		id: itemID('Sandwood Log'),
+		name: 'Sandwood',
+		cbRequired: 1
+	},
+	{
+		level: 40,
 		xp: 25,
-		id: 1511,
-		name: 'Logs',
-		aliases: ['normal'],
-		respawnTime: 3,
-		petChance: 317_647,
-		qpRequired: 0,
-		clueScrollChance: 317_647
-	},
-	{
-		level: 1,
-		xp: 25,
-		id: 2862,
-		name: 'Achey Tree Logs',
-		respawnTime: 2.5,
-		petChance: 317_647,
-		qpRequired: 0,
-		clueScrollChance: 317_647
-	},
-	{
-		level: 15,
-		xp: 37.5,
-		id: 1521,
-		name: 'Oak Logs',
-		respawnTime: 0.5,
-		petChance: 361_146,
-		qpRequired: 0,
-		clueScrollChance: 361_146
-	},
-	{
-		level: 30,
-		xp: 67.5,
-		id: 1519,
-		name: 'Willow Logs',
-		respawnTime: -0.25,
-		petChance: 289_286,
-		qpRequired: 0,
-		clueScrollChance: 289_286
-	},
-	{
-		level: 35,
-		xp: 85,
-		id: 6333,
-		name: 'Teak Logs',
-		respawnTime: -1,
-		petChance: 264_336,
-		qpRequired: 0,
-		clueScrollChance: 264_336
-	},
-	{
-		level: 45,
-		xp: 100,
-		id: 1517,
-		name: 'Maple Logs',
-		respawnTime: 0.75,
-		petChance: 221_918,
-		qpRequired: 0,
-		clueScrollChance: 221_918
-	},
-	{
-		level: 45,
-		xp: 82.5,
-		id: 3239,
-		name: 'Bark',
-		respawnTime: 0,
-		petChance: 214_367,
-		qpRequired: 0,
-		clueScrollChance: 214_367
+		id: itemID('Hillpine Log'),
+		name: 'Hillpine',
+		cbRequired: 1
 	},
 	{
 		level: 50,
-		xp: 125,
-		id: 6332,
-		name: 'Mahogany Logs',
-		respawnTime: 2,
-		petChance: 220_623,
-		qpRequired: 0,
-		clueScrollChance: 220_623
-	},
-	{
-		level: 54,
-		xp: 40,
-		id: 10_810,
-		name: 'Arctic Pine Logs',
-		respawnTime: 4.5,
-		petChance: 145_758,
-		qpRequired: 0,
-		clueScrollChance: 145_758
+		xp: 30,
+		id: itemID('Ashenwood Log'),
+		name: 'Ashenwood',
+		cbRequired: 1
 	},
 	{
 		level: 60,
-		xp: 175,
-		id: 1515,
-		name: 'Yew Logs',
-		respawnTime: 5,
-		petChance: 145_013,
-		qpRequired: 0,
-		clueScrollChance: 145_013
+		xp: 35,
+		id: itemID('Frostscarred Log'),
+		name: 'Frostscarred',
+		cbRequired: 1
 	},
 	{
-		level: 65,
-		xp: 127,
-		id: 6004,
-		name: 'Sulliusceps',
-		aliases: ['sul', 'sulli', 'mush', 'mushroom'],
-		respawnTime: -2,
-		petChance: 343_000,
-		qpRequired: 25,
-		clueScrollChance: 343_000
-	},
-	{
-		level: 75,
-		xp: 250,
-		id: 1513,
-		name: 'Magic Logs',
-		respawnTime: 15,
-		petChance: 72_321,
-		qpRequired: 0,
-		clueScrollChance: 72_321
-	},
-	{
-		level: 90,
-		xp: 380,
-		id: 19_669,
-		name: 'Redwood Logs',
-		respawnTime: 1.5,
-		petChance: 72_321,
-		qpRequired: 0,
-		clueScrollChance: 72_321
+		level: 80,
+		xp: 80,
+		id: itemID('Devilsbark Log'),
+		name: 'Devilsbark',
+		cbRequired: 1
 	}
 ];
 
-const lumberjackItems: { [key: number]: number } = {
-	[itemID('Lumberjack hat')]: 0.4,
-	[itemID('Lumberjack top')]: 0.8,
-	[itemID('Lumberjack legs')]: 0.6,
-	[itemID('Lumberjack boots')]: 0.2
-};
-
 const Woodcutting = {
-	aliases: ['wc', 'woodcutting'],
-	Logs: logs,
+	aliases: ['wc', 'woodcut', 'woodcutting'],
+	Logs,
 	id: SkillsEnum.Woodcutting,
 	emoji: Emoji.Woodcutting,
-	name: 'Woodcutting',
-	lumberjackItems
+	name: 'Woodcutting'
 };
 
 export default Woodcutting;
