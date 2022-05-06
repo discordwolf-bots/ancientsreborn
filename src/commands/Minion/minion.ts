@@ -215,21 +215,6 @@ export default class MinionCommand extends BotCommand {
 		return msg.channel.send(output);
 	}
 
-	async lapcounts(msg: KlasaMessage) {
-		const entries = Object.entries(msg.author.settings.get(UserSettings.LapsScores)).map(arr => [
-			parseInt(arr[0]),
-			arr[1]
-		]);
-		const sepulchreCount = await msg.author.getMinigameScore('sepulchre');
-		if (sepulchreCount === 0 && entries.length === 0) {
-			return msg.channel.send("You haven't done any laps yet! Sad.");
-		}
-		const data = `${entries
-			.map(([id, qty]) => `**${Agility.Courses.find(c => c.id === id)!.name}:** ${qty}`)
-			.join('\n')}\n**Hallowed Sepulchre:** ${await sepulchreCount}`;
-		return msg.channel.send(data);
-	}
-
 	async charge(msg: KlasaMessage, [input = '']: [string | undefined]) {
 		return degradeableItemsCommand(msg, input);
 	}

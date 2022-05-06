@@ -358,45 +358,45 @@ ORDER BY u.sacbanklength DESC LIMIT 10;`;
 		);
 	}
 
-	async minigame(msg: KlasaMessage, [name = '']: [string]) {
-		const minigame = Minigames.find(
-			m => stringMatches(m.name, name) || m.aliases.some(a => stringMatches(a, name))
-		);
-		if (!minigame) {
-			return msg.channel.send(
-				`That's not a valid minigame. Valid minigames are: ${Minigames.map(m => m.name).join(', ')}.`
-			);
-		}
+	// async minigame(msg: KlasaMessage, [name = '']: [string]) {
+	// 	const minigame = Minigames.find(
+	// 		m => stringMatches(m.name, name) || m.aliases.some(a => stringMatches(a, name))
+	// 	);
+	// 	if (!minigame) {
+	// 		return msg.channel.send(
+	// 			`That's not a valid minigame. Valid minigames are: ${Minigames.map(m => m.name).join(', ')}.`
+	// 		);
+	// 	}
 
-		const res = await prisma.minigame.findMany({
-			where: {
-				[minigame.column]: {
-					gt: 10
-				}
-			},
-			orderBy: {
-				[minigame.column]: 'desc'
-			},
-			take: 10
-		});
+	// 	const res = await prisma.minigame.findMany({
+	// 		where: {
+	// 			[minigame.column]: {
+	// 				gt: 10
+	// 			}
+	// 		},
+	// 		orderBy: {
+	// 			[minigame.column]: 'desc'
+	// 		},
+	// 		take: 10
+	// 	});
 
-		this.doMenu(
-			msg,
-			util
-				.chunk(res, LB_PAGE_SIZE)
-				.map((subList, i) =>
-					subList
-						.map(
-							(u, j) =>
-								`${this.getPos(i, j)}**${this.getUsername(u.user_id)}:** ${u[
-									minigame.column
-								].toLocaleString()}`
-						)
-						.join('\n')
-				),
-			`${minigame.name} Leaderboard`
-		);
-	}
+	// 	this.doMenu(
+	// 		msg,
+	// 		util
+	// 			.chunk(res, LB_PAGE_SIZE)
+	// 			.map((subList, i) =>
+	// 				subList
+	// 					.map(
+	// 						(u, j) =>
+	// 							`${this.getPos(i, j)}**${this.getUsername(u.user_id)}:** ${u[
+	// 								minigame.column
+	// 							].toLocaleString()}`
+	// 					)
+	// 					.join('\n')
+	// 			),
+	// 		`${minigame.name} Leaderboard`
+	// 	);
+	// }
 
 	async kc(msg: KlasaMessage, [name = '']: [string]) {
 		const monster = effectiveMonsters.find(
