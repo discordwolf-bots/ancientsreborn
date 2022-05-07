@@ -10,7 +10,7 @@ const Ingots: Production[] = [
 		hourPer: 0,
 		minutePer: 0,
 		secondPer: 42,
-		inputOres: {
+		input: {
 			[itemID('Copper Ore')]: 5,
 			[itemID('Tin Ore')]: 5
 		}
@@ -23,7 +23,7 @@ const Ingots: Production[] = [
 		hourPer: 0,
 		minutePer: 1,
 		secondPer: 3,
-		inputOres: {
+		input: {
 			[itemID('Iron Ore')]: 10
 		}
 	},
@@ -35,7 +35,7 @@ const Ingots: Production[] = [
 		hourPer: 0,
 		minutePer: 2,
 		secondPer: 48,
-		inputOres: {
+		input: {
 			[itemID('Iron Ore')]: 10,
 			[itemID('Coal')]: 10
 		}
@@ -48,7 +48,7 @@ const Ingots: Production[] = [
 		hourPer: 0,
 		minutePer: 8,
 		secondPer: 0,
-		inputOres: {
+		input: {
 			[itemID('Silver Ore')]: 50
 		}
 	},
@@ -60,7 +60,7 @@ const Ingots: Production[] = [
 		hourPer: 0,
 		minutePer: 9,
 		secondPer: 0,
-		inputOres: {
+		input: {
 			[itemID('Gold Ore')]: 50
 		}
 	},
@@ -72,7 +72,7 @@ const Ingots: Production[] = [
 		hourPer: 0,
 		minutePer: 4,
 		secondPer: 29,
-		inputOres: {
+		input: {
 			[itemID('Mithril Ore')]: 10,
 			[itemID('Coal')]: 15
 		}
@@ -85,7 +85,7 @@ const Ingots: Production[] = [
 		hourPer: 0,
 		minutePer: 6,
 		secondPer: 19,
-		inputOres: {
+		input: {
 			[itemID('Adamantium Ore')]: 10,
 			[itemID('Coal')]: 20
 		}
@@ -98,7 +98,7 @@ const Ingots: Production[] = [
 		hourPer: 0,
 		minutePer: 8,
 		secondPer: 36,
-		inputOres: {
+		input: {
 			[itemID('Dianium Ore')]: 10,
 			[itemID('Coal')]: 25
 		}
@@ -111,7 +111,7 @@ const Ingots: Production[] = [
 		hourPer: 0,
 		minutePer: 16,
 		secondPer: 0,
-		inputOres: {
+		input: {
 			[itemID('Platinum Ore')]: 50
 		}
 	}

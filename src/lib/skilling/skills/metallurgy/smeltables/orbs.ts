@@ -10,7 +10,7 @@ const Orb: Production[] = [
 		hourPer: 0,
 		minutePer: 3,
 		secondPer: 52,
-		inputOres: {
+		input: {
 			[itemID('Copper Ore')]: 25,
 			[itemID('Tin Ore')]: 25
 		}
@@ -23,7 +23,7 @@ const Orb: Production[] = [
 		hourPer: 0,
 		minutePer: 4,
 		secondPer: 46,
-		inputOres: {
+		input: {
 			[itemID('Iron Ore')]: 40
 		}
 	},
@@ -35,7 +35,7 @@ const Orb: Production[] = [
 		hourPer: 0,
 		minutePer: 12,
 		secondPer: 36,
-		inputOres: {
+		input: {
 			[itemID('Iron Ore')]: 40,
 			[itemID('Coal')]: 40
 		}
@@ -48,7 +48,7 @@ const Orb: Production[] = [
 		hourPer: 0,
 		minutePer: 20,
 		secondPer: 26,
-		inputOres: {
+		input: {
 			[itemID('Mithril Ore')]: 50,
 			[itemID('Coal')]: 50
 		}
@@ -61,7 +61,7 @@ const Orb: Production[] = [
 		hourPer: 0,
 		minutePer: 28,
 		secondPer: 6,
-		inputOres: {
+		input: {
 			[itemID('Adamantium Ore')]: 60,
 			[itemID('Coal')]: 60
 		}
@@ -74,7 +74,7 @@ const Orb: Production[] = [
 		hourPer: 0,
 		minutePer: 37,
 		secondPer: 33,
-		inputOres: {
+		input: {
 			[itemID('Dianium Ore')]: 70,
 			[itemID('Coal')]: 70
 		}

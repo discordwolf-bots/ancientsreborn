@@ -10,7 +10,7 @@ const Studs: Production[] = [
 		hourPer: 0,
 		minutePer: 1,
 		secondPer: 32,
-		inputOres: {
+		input: {
 			[itemID('Copper Ore')]: 10,
 			[itemID('Tin Ore')]: 10
 		}
@@ -23,7 +23,7 @@ const Studs: Production[] = [
 		hourPer: 0,
 		minutePer: 1,
 		secondPer: 45,
-		inputOres: {
+		input: {
 			[itemID('Iron Ore')]: 15
 		}
 	},
@@ -35,7 +35,7 @@ const Studs: Production[] = [
 		hourPer: 0,
 		minutePer: 4,
 		secondPer: 38,
-		inputOres: {
+		input: {
 			[itemID('Iron Ore')]: 20,
 			[itemID('Coal')]: 10
 		}
@@ -48,7 +48,7 @@ const Studs: Production[] = [
 		hourPer: 0,
 		minutePer: 7,
 		secondPer: 1,
-		inputOres: {
+		input: {
 			[itemID('Mithril Ore')]: 20,
 			[itemID('Coal')]: 15
 		}
@@ -61,7 +61,7 @@ const Studs: Production[] = [
 		hourPer: 0,
 		minutePer: 9,
 		secondPer: 11,
-		inputOres: {
+		input: {
 			[itemID('Adamantium Ore')]: 20,
 			[itemID('Coal')]: 20
 		}
@@ -74,7 +74,7 @@ const Studs: Production[] = [
 		hourPer: 0,
 		minutePer: 11,
 		secondPer: 50,
-		inputOres: {
+		input: {
 			[itemID('Dianium Ore')]: 20,
 			[itemID('Coal')]: 25
 		}
