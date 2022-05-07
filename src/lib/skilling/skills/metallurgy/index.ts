@@ -1,6 +1,6 @@
 import { Emoji } from '../../../constants';
 import { SkillsEnum } from '../../types';
-import { Smeltables } from './craftables/index';
+import { Smeltables } from './smeltables/index';
 
 const Metallurgy = {
 	aliases: ['metallurgy'],
