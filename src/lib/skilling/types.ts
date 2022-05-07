@@ -6,29 +6,29 @@ import { SlayerTaskUnlocksEnum } from '../slayer/slayerUnlocks';
 import { ItemBank } from '../types';
 
 export enum SkillsEnum {
-	Agility = 'agility',
-	Cooking = 'cooking',
-	Fishing = 'fishing',
 	Mining = 'mining',
-	Smithing = 'smithing',
+	Fishing = 'fishing',
 	Woodcutting = 'woodcutting',
-	Firemaking = 'firemaking',
-	Runecraft = 'runecraft',
-	Crafting = 'crafting',
-	Prayer = 'prayer',
+	Gathering = 'gathering',
+	Metallurgy = 'metallurgy',
+	Blacksmithing = 'blacksmithing',
+	Cooking = 'cooking',
+	Carpentry = 'carpentry',
+	Weaving = 'weaving',
 	Fletching = 'fletching',
-	Farming = 'farming',
-	Herblore = 'herblore',
-	Thieving = 'thieving',
-	Hunter = 'hunter',
-	Construction = 'construction',
-	Magic = 'magic',
-	Attack = 'attack',
+	Tailoring = 'tailoring',
+
+	Piercing = 'piercing',
+	Fencing = 'fencing',
+	HeavyWeapons = 'heavyweapons',
+	MagicStaffs = 'magicstaffs',
+	RangedWeapons = 'rangedweapons',
+
 	Strength = 'strength',
+	Dexterity = 'dexterity',
 	Defence = 'defence',
-	Ranged = 'ranged',
-	Hitpoints = 'hitpoints',
-	Slayer = 'slayer'
+	Intellect = 'intellect',
+	Vitality = 'vitality'
 }
 
 export interface Ore {
@@ -36,11 +36,7 @@ export interface Ore {
 	xp: number;
 	id: number;
 	name: string;
-	respawnTime: number;
-	petChance?: number;
-	nuggets?: boolean;
-	minerals?: number;
-	clueScrollChance?: number;
+	cbRequired?: number;
 }
 
 export interface Log {
@@ -48,18 +44,17 @@ export interface Log {
 	xp: number;
 	id: number;
 	name: string;
-	aliases?: string[];
-	respawnTime: number;
-	petChance?: number;
-	qpRequired: number;
-	clueScrollChance?: number;
+	alias?: string[];
+	cbRequired?: number;
 }
 
-export interface Burnable {
+export interface Herb {
 	level: number;
 	xp: number;
+	id: number;
 	name: string;
-	inputLogs: number;
+	alias?: string[];
+	cbRequired?: number;
 }
 
 export interface Fish {
@@ -67,26 +62,8 @@ export interface Fish {
 	xp: number;
 	id: number;
 	name: string;
-	petChance?: number;
-	timePerFish: number;
-	bait?: number;
-	qpRequired?: number;
-	bigFish?: number;
-	bigFishRate?: number;
-	clueScrollChance?: number;
+	cbRequired?: number;
 	alias?: string[];
-}
-
-export interface Course {
-	id: number;
-	name: string;
-	level: number;
-	xp: number;
-	marksPer60?: number;
-	lapTime: number;
-	petChance: number;
-	aliases: string[];
-	qpRequired?: number;
 }
 
 export interface Cookable {
@@ -97,7 +74,22 @@ export interface Cookable {
 	inputCookables: ItemBank;
 	stopBurnAt: number;
 	stopBurnAtCG?: number;
+	timePer: number;
 	burntCookable: number;
+	alias?: string[];
+}
+
+export interface Production {
+	level: number;
+	xp: number;
+	id: number;
+	name: string;
+	input: ItemBank;
+	timePer?: number;
+	hourPer?: number;
+	minutePer?: number;
+	secondPer?: number;
+	amount?: number;
 	alias?: string[];
 }
 
