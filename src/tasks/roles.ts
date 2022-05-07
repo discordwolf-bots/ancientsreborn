@@ -6,8 +6,6 @@ import { CLUser, SkillUser } from '../commands/Minion/leaderboard';
 import { production } from '../config';
 import { BOT_TYPE, Roles, SupportServer } from '../lib/constants';
 import { getCollectionItems } from '../lib/data/Collections';
-import ClueTiers from '../lib/minions/data/clueTiers';
-import { Minigames } from '../lib/settings/minigames';
 import { UserSettings } from '../lib/settings/types/UserSettings';
 import Skills from '../lib/skilling/skills';
 import { convertXPtoLVL } from '../lib/util';
@@ -18,27 +16,7 @@ function addToUserMap(userMap: Record<string, string[]>, id: string, reason: str
 	userMap[id].push(reason);
 }
 
-const minigames = Minigames.map(game => game.column).filter(i => i !== 'tithe_farm');
-
 const collections = ['pets', 'skilling', 'clues', 'bosses', 'minigames', 'raids', 'slayer', 'other', 'custom'];
-
-const mostSlayerPointsQuery = `SELECT id, 'Most Points' as desc
-FROM users
-WHERE "slayer.points" > 50
-ORDER BY "slayer.points" DESC
-LIMIT 1;`;
-
-const longerSlayerTaskStreakQuery = `SELECT id, 'Longest Task Streak' as desc
-FROM users
-WHERE "slayer.task_streak" > 20
-ORDER BY "slayer.task_streak" DESC
-LIMIT 1;`;
-
-const mostSlayerTasksDoneQuery = `SELECT user_id::text as id, 'Most Tasks' as desc
-FROM slayer_tasks
-GROUP BY user_id
-ORDER BY count(user_id) DESC
-LIMIT 1;`;
 
 async function addRoles({
 	g,
@@ -196,7 +174,7 @@ SELECT id, (cardinality(u.cl_keys) - u.inverse_length) as qty
 				  FROM (
   SELECT ARRAY(SELECT * FROM JSONB_OBJECT_KEYS("collectionLogBank")) "cl_keys",
   				id, "collectionLogBank",
-			    cardinality(ARRAY(SELECT * FROM JSONB_OBJECT_KEYS("collectionLogBank" - array[${items
+				cardinality(ARRAY(SELECT * FROM JSONB_OBJECT_KEYS("collectionLogBank" - array[${items
 					.map(i => `'${i}'`)
 					.join(', ')}]))) "inverse_length"
 			FROM users
@@ -290,142 +268,23 @@ ORDER BY u.sacbanklength DESC LIMIT 1;`);
 			result += await addRoles({ g: g!, users: topSacrificers, role: Roles.TopSacrificer, badge: 8, userMap });
 		}
 
-		// Top minigamers
-		async function topMinigamers() {
-			let topMinigamers = (
-				await Promise.all(
-					minigames.map(m =>
-						q(
-							`SELECT user_id, '${m}' as m
-FROM minigames
-ORDER BY ${m} DESC
-LIMIT 1;`
-						)
-					)
-				)
-			).map((i: any) => [i[0].user_id, Minigames.find(m => m.column === i[0].m)!.name]);
-
-			let userMap = {};
-			for (const [id, m] of topMinigamers) {
-				addToUserMap(userMap, id, `Rank 1 ${m}`);
+		// Top duelers
+		async function topDuelers() {
+			const userMap = {};
+			let topDuelers: string[] = [];
+			const mostKills = await q<SkillUser[]>('SELECT id FROM users ORDER BY "stats_duelWins" DESC LIMIT 3;');
+			for (let i = 0; i < 3; i++) {
+				topDuelers.push(mostKills[i].id);
+				addToUserMap(userMap, mostKills[i].id, `Rank ${i + 1} Duel Wins`);
 			}
-
-			result += await addRoles({
-				g: g!,
-				users: topMinigamers.map(i => i[0]),
-				role: Roles.TopMinigamer,
-				badge: 11,
-				userMap
-			});
-		}
-
-		// Top clue hunters
-		async function topClueHunters() {
-			let topClueHunters = (
-				await Promise.all(
-					ClueTiers.map(t =>
-						q(
-							`SELECT id, '${t.name}' as n, ("clueScores"->>'${t.id}')::int as qty
-FROM users
-WHERE "clueScores"->>'${t.id}' IS NOT NULL
-ORDER BY qty DESC
-LIMIT 1;`
-						)
-					)
-				)
-			)
-				.filter((i: any) => Boolean(i[0]?.id))
-				.map((i: any) => [i[0]?.id, i[0]?.n]);
-
-			let userMap = {};
-
-			for (const [id, n] of topClueHunters) {
-				addToUserMap(userMap, id, `Rank 1 ${n} Clues`);
-			}
-
-			result += await addRoles({
-				g: g!,
-				users: topClueHunters.map(i => i[0]),
-				role: Roles.TopClueHunter,
-				badge: null,
-				userMap
-			});
-		}
-
-		// Top farmers
-		async function farmers() {
-			const queries = [
-				`SELECT id, 'Top 2 Farming Contracts' as desc
-FROM users
-WHERE "minion.farmingContract" IS NOT NULL
-AND "minion.ironman" = true
-ORDER BY ("minion.farmingContract"->>'contractsCompleted')::int DESC
-LIMIT 2;`,
-				`SELECT id, 'Top 2 Ironman Farming Contracts' as desc
-FROM users
-WHERE "minion.farmingContract" IS NOT NULL
-ORDER BY ("minion.farmingContract"->>'contractsCompleted')::int DESC
-LIMIT 2;`,
-				`SELECT user_id::text as id, 'Top 2 Most Farming Trips' as desc
-FROM activity
-WHERE type = 'Farming'
-GROUP BY user_id
-ORDER BY count(user_id) DESC
-LIMIT 2;`,
-				`SELECT id, 'Top 2 Tithe Farm' as desc
-FROM users
-ORDER BY "stats.titheFarmsCompleted" DESC
-LIMIT 2;`
-			];
-			let res = (await Promise.all(queries.map(q))).map((i: any) => [i[0]?.id, i[0]?.desc]);
-			let userMap = {};
-			for (const [id, desc] of res) {
-				addToUserMap(userMap, id, desc);
-			}
-
-			result += await addRoles({
-				g: g!,
-				users: res.map(i => i[0]),
-				role: '894194027363205150',
-				badge: null,
-				userMap
-			});
-		}
-
-		// Top slayers
-		async function slayer() {
-			let topSlayers = (
-				await Promise.all(
-					[mostSlayerPointsQuery, longerSlayerTaskStreakQuery, mostSlayerTasksDoneQuery].map(query =>
-						q(query)
-					)
-				)
-			)
-				.filter((i: any) => Boolean(i[0]?.id))
-				.map((i: any) => [i[0]?.id, i[0]?.desc]);
-
-			let userMap = {};
-			for (const [id, desc] of topSlayers) {
-				addToUserMap(userMap, id, desc);
-			}
-
-			result += await addRoles({
-				g: g!,
-				users: topSlayers.map(i => i[0]),
-				role: Roles.TopSlayer,
-				badge: null,
-				userMap
-			});
+			result += await addRoles({ g: g!, users: topDuelers, role: Roles.TopDueler, badge: 9, userMap });
 		}
 
 		const tup = [
-			['Top Slayer', slayer],
-			['Top Clue Hunters', topClueHunters],
-			['Top Minigamers', topMinigamers],
 			['Top Sacrificers', topSacrificers],
 			['Top Collectors', topCollector],
 			['Top Skillers', topSkillers],
-			['Top Farmers', farmers]
+			['Top Duelers', topDuelers]
 		] as const;
 
 		let failed: string[] = [];

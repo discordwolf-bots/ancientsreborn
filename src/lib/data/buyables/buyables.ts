@@ -1,8 +1,6 @@
 import { KlasaUser } from 'klasa';
 import { Bank } from 'oldschooljs';
 
-import { chompyHats } from '../../../commands/Minion/chompyhunt';
-import { MAX_QP } from '../../constants';
 import { CombatCannonItemBank } from '../../minions/data/combatConstants';
 import { MinigameName } from '../../settings/settings';
 import { ItemBank, Skills } from '../../types';
@@ -630,124 +628,11 @@ const noveltyFood: Buyable[] = [
 
 const Buyables: Buyable[] = [
 	{
-		name: 'Quest point cape',
-		outputItems: {
-			[itemID('Quest point cape')]: 1,
-			[itemID('Quest point hood')]: 1
-		},
-		aliases: ['quest cape'],
-		qpRequired: MAX_QP,
-		gpCost: 99_000
-	},
-	{
-		name: 'Fishing Bait',
-		aliases: ['fishing bait'],
-		gpCost: 20,
-		ironmanPrice: 3
-	},
-	{
-		name: 'Jug of Water',
-		aliases: ['jug of water', 'jugs of water'],
-		gpCost: 100
-	},
-
-	{
-		name: 'Feather',
-		aliases: ['feather'],
-		gpCost: 50,
-		ironmanPrice: 2
-	},
-	{
-		name: 'Shield right half',
-		aliases: ['shield right half', 'right shield'],
-		qpRequired: 111,
-		gpCost: 1_000_000
-	},
-	{
-		name: 'Dragon metal shard',
-		aliases: ['metal shard'],
-		qpRequired: 205,
-		gpCost: 2_500_000
-	},
-	{
-		name: 'Eye of newt',
-		aliases: ['eye of newt', 'newt eye'],
-		gpCost: 300,
-		ironmanPrice: 3
-	},
-	{
-		name: 'Vial of water',
-		aliases: ['vial of water'],
-		gpCost: 60,
-		ironmanPrice: 3
-	},
-	{
-		name: 'Vial',
-		aliases: ['vial'],
-		gpCost: 30,
-		ironmanPrice: 2
-	},
-	{
-		name: 'Cup of hot water',
-		aliases: ['cup of hot water', 'hot water'],
-		gpCost: 1500
-	},
-	{
-		name: 'Chocolate bar',
-		aliases: ['chocolate bar', 'chocolate'],
-		gpCost: 1000
-	},
-	{
-		name: 'Ball of wool',
-		aliases: ['wool ball', 'ball wool'],
-		gpCost: 300
-	},
-	{
-		name: 'Compost',
-		gpCost: 400
-	},
-	{
-		name: 'Amylase pack',
-		outputItems: {
-			[itemID('Amylase crystal')]: 100
-		},
-		itemCost: resolveNameBank({ 'Mark of grace': 10 })
-	},
-	{
-		name: 'Dragon scimitar',
-		gpCost: 500_000,
-		qpRequired: 105
-	},
-	{
-		name: 'Fishbowl pet',
-		outputItems: {
-			6672: 1
-		},
-		gpCost: 500_000
-	},
-	{
-		name: 'Potato with cheese',
-		gpCost: 650,
-		skillsNeeded: {
-			attack: 65,
-			strength: 65
-		}
-	},
-	{
-		name: 'Torstol',
-		itemCost: resolveNameBank({ 'Torstol potion (unf)': 1 })
-	},
-	{
-		name: 'Ogre bow',
-		gpCost: 10_000
-	},
-	{
 		name: 'Salve amulet',
 		gpCost: 200_000,
 		skillsNeeded: {
-			crafting: 35
-		},
-		qpRequired: 58
+			strength: 35
+		}
 	},
 	{
 		name: 'Sandworms',
@@ -785,14 +670,5 @@ const Buyables: Buyable[] = [
 	...randomEventBuyables,
 	...tobCapes
 ];
-
-for (const [chompyHat, qty] of chompyHats) {
-	Buyables.push({
-		name: chompyHat.name,
-		outputItems: new Bank().add(chompyHat.id).bank,
-		gpCost: qty * 44,
-		minigameScoreReq: ['big_chompy_bird_hunting', qty]
-	});
-}
 
 export default Buyables;
