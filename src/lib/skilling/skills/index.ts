@@ -1,76 +1,88 @@
 import { Emoji } from '../../constants';
 import { Skill, SkillsEnum } from '../types';
-import Agility from './agility';
-import Construction from './construction';
+import Blacksmithing from './blacksmithing';
+import Carpentry from './carpentry';
 import Cooking from './cooking';
-import Crafting from './crafting';
-import Farming from './farming';
-import Firemaking from './firemaking';
 import Fishing from './fishing';
-import Fletching from './fletching';
-import Herblore from './herblore/herblore';
-import Hunter from './hunter/hunter';
-import Magic from './magic';
+import Fletching from './fletching/index';
+import Gathering from './gathering';
+import Metallurgy from './metallurgy';
 import Mining from './mining';
-import Prayer from './prayer';
-import Runecraft from './runecraft';
-import Smithing from './smithing';
-import Thieving from './thieving';
+import Tailoring from './tailoring';
+import Weaving from './weaving';
 import Woodcutting from './woodcutting';
 
 export const Skills: Record<string, Skill> = {
-	Crafting,
-	Agility,
-	Cooking,
-	Fishing,
 	Mining,
-	Smithing,
+	Fishing,
 	Woodcutting,
-	Firemaking,
-	Prayer,
-	Runecraft,
+	Gathering,
+	Metallurgy,
+	Blacksmithing,
+	Cooking,
+	Carpentry,
+	Weaving,
 	Fletching,
-	Thieving,
-	Farming,
-	Herblore,
-	Hunter,
-	Construction,
-	Magic,
-	Hitpoints: {
-		aliases: ['hitpoints', 'hp'],
-		id: SkillsEnum.Hitpoints,
-		emoji: Emoji.Hitpoints,
-		name: 'Hitpoints'
-	},
-	Attack: {
-		aliases: ['attack', 'atk'],
-		id: SkillsEnum.Attack,
-		emoji: Emoji.Attack,
-		name: 'Attack'
-	},
+	Tailoring,
 	Strength: {
-		aliases: ['str', 'strength'],
+		aliases: ['strength', 'str'],
 		id: SkillsEnum.Strength,
 		emoji: Emoji.Strength,
 		name: 'Strength'
 	},
+	Dexterity: {
+		aliases: ['dexterity', 'dex'],
+		id: SkillsEnum.Dexterity,
+		emoji: Emoji.Dexterity,
+		name: 'Dexterity'
+	},
 	Defence: {
-		aliases: ['def', 'defence'],
+		aliases: ['defence', 'def'],
 		id: SkillsEnum.Defence,
 		emoji: Emoji.Defence,
 		name: 'Defence'
 	},
-	Ranged: {
-		aliases: ['range', 'ranged'],
-		id: SkillsEnum.Ranged,
-		emoji: Emoji.Ranged,
-		name: 'Ranged'
+	Intellect: {
+		aliases: ['intellect', 'intl'],
+		id: SkillsEnum.Intellect,
+		emoji: Emoji.Intellect,
+		name: 'Intellect'
 	},
-	Slayer: {
-		aliases: ['worst skill', 'slayer', 'slay'],
-		id: SkillsEnum.Slayer,
-		emoji: Emoji.Slayer,
-		name: 'Slayer'
+	Vitality: {
+		aliases: ['vitality', 'health'],
+		id: SkillsEnum.Vitality,
+		emoji: Emoji.Vitality,
+		name: 'Vitality'
+	},
+	Piercing: {
+		aliases: ['piercing'],
+		id: SkillsEnum.Piercing,
+		emoji: Emoji.Piercing,
+		name: 'Piercing'
+	},
+	Fencing: {
+		aliases: ['fencing'],
+		id: SkillsEnum.Fencing,
+		emoji: Emoji.Fencing,
+		name: 'Fencing'
+	},
+	HeavyWeapons: {
+		aliases: ['heavyweapons', 'heavy'],
+		id: SkillsEnum.HeavyWeapons,
+		emoji: Emoji.HeavyWeapons,
+		name: 'HeavyWeapons'
+	},
+	MagicStaffs: {
+		aliases: ['magicstaffs', 'magic', 'mage'],
+		id: SkillsEnum.MagicStaffs,
+		emoji: Emoji.MagicStaffs,
+		name: 'MagicStaffs'
+	},
+	RangedWeapons: {
+		aliases: ['ranged', 'rng', 'rangedweapons'],
+		id: SkillsEnum.RangedWeapons,
+		emoji: Emoji.RangedWeapons,
+		name: 'RangedWeapons'
 	}
 };
 
