@@ -1,13 +1,15 @@
 import itemID from '../../../../util/itemID';
-import { Metallurgy } from '../../../types';
+import { Production } from '../../../types';
 
-const Studs: Metallurgy[] = [
+const Studs: Production[] = [
 	{
 		name: 'Bronze Studs',
 		id: itemID('Bronze Studs'),
 		level: 8,
 		xp: 32,
-		timePer: 1 * 60 + 32,
+		hourPer: 0,
+		minutePer: 1,
+		secondPer: 32,
 		inputOres: {
 			[itemID('Copper Ore')]: 10,
 			[itemID('Tin Ore')]: 10
@@ -18,7 +20,9 @@ const Studs: Metallurgy[] = [
 		id: itemID('Iron Studs'),
 		level: 17,
 		xp: 45,
-		timePer: 1 * 60 + 45,
+		hourPer: 0,
+		minutePer: 1,
+		secondPer: 45,
 		inputOres: {
 			[itemID('Iron Ore')]: 15
 		}
@@ -28,7 +32,9 @@ const Studs: Metallurgy[] = [
 		id: itemID('Steel Studs'),
 		level: 27,
 		xp: 128,
-		timePer: 4 * 60 + 38,
+		hourPer: 0,
+		minutePer: 4,
+		secondPer: 38,
 		inputOres: {
 			[itemID('Iron Ore')]: 20,
 			[itemID('Coal')]: 10
@@ -39,7 +45,9 @@ const Studs: Metallurgy[] = [
 		id: itemID('Mithril Studs'),
 		level: 47,
 		xp: 193,
-		timePer: 7 * 60 + 1,
+		hourPer: 0,
+		minutePer: 7,
+		secondPer: 1,
 		inputOres: {
 			[itemID('Mithril Ore')]: 20,
 			[itemID('Coal')]: 15
@@ -50,7 +58,9 @@ const Studs: Metallurgy[] = [
 		id: itemID('Adamantium Studs'),
 		level: 57,
 		xp: 269,
-		timePer: 9 * 60 + 11,
+		hourPer: 0,
+		minutePer: 9,
+		secondPer: 11,
 		inputOres: {
 			[itemID('Adamantium Ore')]: 20,
 			[itemID('Coal')]: 20
@@ -61,7 +71,9 @@ const Studs: Metallurgy[] = [
 		id: itemID('Dianium Studs'),
 		level: 67,
 		xp: 360,
-		timePer: 11 * 60 + 50,
+		hourPer: 0,
+		minutePer: 11,
+		secondPer: 50,
 		inputOres: {
 			[itemID('Dianium Ore')]: 20,
 			[itemID('Coal')]: 25

@@ -1,13 +1,15 @@
 import itemID from '../../../../util/itemID';
-import { Metallurgy } from '../../../types';
+import { Production } from '../../../types';
 
-const Ingots: Metallurgy[] = [
+const Ingots: Production[] = [
 	{
 		name: 'Bronze Ingot',
 		id: itemID('Bronze Ingot'),
 		level: 1,
 		xp: 14,
-		timePer: 42,
+		hourPer: 0,
+		minutePer: 0,
+		secondPer: 42,
 		inputOres: {
 			[itemID('Copper Ore')]: 5,
 			[itemID('Tin Ore')]: 5
@@ -18,7 +20,9 @@ const Ingots: Metallurgy[] = [
 		id: itemID('Iron Ingot'),
 		level: 10,
 		xp: 26,
-		timePer: 63,
+		hourPer: 0,
+		minutePer: 1,
+		secondPer: 3,
 		inputOres: {
 			[itemID('Iron Ore')]: 10
 		}
@@ -28,7 +32,9 @@ const Ingots: Metallurgy[] = [
 		id: itemID('Steel Ingot'),
 		level: 20,
 		xp: 75,
-		timePer: 168,
+		hourPer: 0,
+		minutePer: 2,
+		secondPer: 48,
 		inputOres: {
 			[itemID('Iron Ore')]: 10,
 			[itemID('Coal')]: 10
@@ -39,7 +45,9 @@ const Ingots: Metallurgy[] = [
 		id: itemID('Silver Bar'),
 		level: 30,
 		xp: 220,
-		timePer: 480,
+		hourPer: 0,
+		minutePer: 8,
+		secondPer: 0,
 		inputOres: {
 			[itemID('Silver Ore')]: 50
 		}
@@ -49,7 +57,9 @@ const Ingots: Metallurgy[] = [
 		id: itemID('Gold Bar'),
 		level: 35,
 		xp: 250,
-		timePer: 540,
+		hourPer: 0,
+		minutePer: 9,
+		secondPer: 0,
 		inputOres: {
 			[itemID('Gold Ore')]: 50
 		}
@@ -59,7 +69,9 @@ const Ingots: Metallurgy[] = [
 		id: itemID('Mithril Ingot'),
 		level: 40,
 		xp: 120,
-		timePer: 269,
+		hourPer: 0,
+		minutePer: 4,
+		secondPer: 29,
 		inputOres: {
 			[itemID('Mithril Ore')]: 10,
 			[itemID('Coal')]: 15
@@ -70,7 +82,9 @@ const Ingots: Metallurgy[] = [
 		id: itemID('Adamantium Ingot'),
 		level: 50,
 		xp: 177,
-		timePer: 379,
+		hourPer: 0,
+		minutePer: 6,
+		secondPer: 19,
 		inputOres: {
 			[itemID('Adamantium Ore')]: 10,
 			[itemID('Coal')]: 20
@@ -81,7 +95,9 @@ const Ingots: Metallurgy[] = [
 		id: itemID('Dianium Ingot'),
 		level: 60,
 		xp: 246,
-		timePer: 516,
+		hourPer: 0,
+		minutePer: 8,
+		secondPer: 36,
 		inputOres: {
 			[itemID('Dianium Ore')]: 10,
 			[itemID('Coal')]: 25
@@ -92,7 +108,9 @@ const Ingots: Metallurgy[] = [
 		id: itemID('Platinum Ingot'),
 		level: 70,
 		xp: 460,
-		timePer: 16 * 60,
+		hourPer: 0,
+		minutePer: 16,
+		secondPer: 0,
 		inputOres: {
 			[itemID('Platinum Ore')]: 50
 		}

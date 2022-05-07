@@ -7,7 +7,9 @@ const Arrowheads: Production[] = [
 		id: itemID('Bronze Arrowheads'),
 		level: 5,
 		xp: 6,
-		timePer: 18,
+		hourPer: 0,
+		minutePer: 0,
+		secondPer: 18,
 		input: {
 			[itemID('Copper Ore')]: 2,
 			[itemID('Tin Ore')]: 2
@@ -18,7 +20,9 @@ const Arrowheads: Production[] = [
 		id: itemID('Iron Arrowheads'),
 		level: 14,
 		xp: 11,
-		timePer: 27,
+		hourPer: 0,
+		minutePer: 0,
+		secondPer: 27,
 		input: {
 			[itemID('Iron Ore')]: 4
 		}
@@ -28,7 +32,9 @@ const Arrowheads: Production[] = [
 		id: itemID('Steel Arrowheads'),
 		level: 24,
 		xp: 54,
-		timePer: 54,
+		hourPer: 0,
+		minutePer: 0,
+		secondPer: 54,
 		input: {
 			[itemID('Iron Ore')]: 4,
 			[itemID('Coal')]: 2
@@ -39,7 +45,9 @@ const Arrowheads: Production[] = [
 		id: itemID('Mithril Arrowheads'),
 		level: 44,
 		xp: 36,
-		timePer: 81,
+		hourPer: 0,
+		minutePer: 1,
+		secondPer: 21,
 		input: {
 			[itemID('Mithril Ore')]: 4,
 			[itemID('Coal')]: 3
@@ -50,7 +58,9 @@ const Arrowheads: Production[] = [
 		id: itemID('Adamantium Arrowheads'),
 		level: 54,
 		xp: 51,
-		timePer: 107,
+		hourPer: 0,
+		minutePer: 1,
+		secondPer: 47,
 		input: {
 			[itemID('Adamantium Ore')]: 4,
 			[itemID('Coal')]: 4
@@ -61,7 +71,9 @@ const Arrowheads: Production[] = [
 		id: itemID('Dianium Arrowheads'),
 		level: 64,
 		xp: 68,
-		timePer: 138,
+		hourPer: 0,
+		minutePer: 2,
+		secondPer: 18,
 		input: {
 			[itemID('Dianium Ore')]: 4,
 			[itemID('Coal')]: 5

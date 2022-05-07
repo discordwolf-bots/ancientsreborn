@@ -1,13 +1,15 @@
 import itemID from '../../../../util/itemID';
-import { Metallurgy } from '../../../types';
+import { Production } from '../../../types';
 
-const Orb: Metallurgy[] = [
+const Orb: Production[] = [
 	{
 		name: 'Bronze Orb',
 		id: itemID('Bronze Orb'),
 		level: 10,
 		xp: 82,
-		timePer: 3 * 60 + 52,
+		hourPer: 0,
+		minutePer: 3,
+		secondPer: 52,
 		inputOres: {
 			[itemID('Copper Ore')]: 25,
 			[itemID('Tin Ore')]: 25
@@ -18,7 +20,9 @@ const Orb: Metallurgy[] = [
 		id: itemID('Iron Orb'),
 		level: 19,
 		xp: 124,
-		timePer: 4 * 60 + 46,
+		hourPer: 0,
+		minutePer: 4,
+		secondPer: 46,
 		inputOres: {
 			[itemID('Iron Ore')]: 40
 		}
@@ -28,7 +32,9 @@ const Orb: Metallurgy[] = [
 		id: itemID('Steel Orb'),
 		level: 29,
 		xp: 354,
-		timePer: 12 * 60 + 36,
+		hourPer: 0,
+		minutePer: 12,
+		secondPer: 36,
 		inputOres: {
 			[itemID('Iron Ore')]: 40,
 			[itemID('Coal')]: 40
@@ -39,7 +45,9 @@ const Orb: Metallurgy[] = [
 		id: itemID('Mithril Orb'),
 		level: 49,
 		xp: 570,
-		timePer: 20 * 60 + 26,
+		hourPer: 0,
+		minutePer: 20,
+		secondPer: 26,
 		inputOres: {
 			[itemID('Mithril Ore')]: 50,
 			[itemID('Coal')]: 50
@@ -50,7 +58,9 @@ const Orb: Metallurgy[] = [
 		id: itemID('Adamantium Orb'),
 		level: 59,
 		xp: 836,
-		timePer: 28 * 60 + 6,
+		hourPer: 0,
+		minutePer: 28,
+		secondPer: 6,
 		inputOres: {
 			[itemID('Adamantium Ore')]: 60,
 			[itemID('Coal')]: 60
@@ -61,7 +71,9 @@ const Orb: Metallurgy[] = [
 		id: itemID('Dianium Orb'),
 		level: 69,
 		xp: 1161,
-		timePer: 37 * 60 + 33,
+		hourPer: 0,
+		minutePer: 37,
+		secondPer: 33,
 		inputOres: {
 			[itemID('Dianium Ore')]: 70,
 			[itemID('Coal')]: 70

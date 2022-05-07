@@ -4,6 +4,4 @@ import Ingots from './ingots';
 import Orb from './orbs';
 import Studs from './studs';
 
-const metallurgyItems: Production[] = [...Arrowheads, ...Ingots, ...Orb, ...Studs];
-
-export default metallurgyItems;
+export const Smeltables: Production[] = [...Arrowheads, ...Ingots, ...Orb, ...Studs];

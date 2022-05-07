@@ -6,6 +6,4 @@ import Gloves from './gloves';
 import Helmet from './helmet';
 import LegGuards from './legguards';
 
-const Armour: Production[] = [...Belt, ...Boots, ...Chestpiece, ...Gloves, ...Helmet, ...LegGuards];
-
-export default Armour;
+export const Armour: Production[] = [...Belt, ...Boots, ...Chestpiece, ...Gloves, ...Helmet, ...LegGuards];

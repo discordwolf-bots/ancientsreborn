@@ -4,6 +4,4 @@ import Hammer from './hammer';
 import Shield from './shield';
 import Sword from './sword';
 
-const Weapons: Production[] = [...Axe, ...Hammer, ...Shield, ...Sword];
-
-export default Weapons;
+export const Weapons: Production[] = [...Axe, ...Hammer, ...Shield, ...Sword];

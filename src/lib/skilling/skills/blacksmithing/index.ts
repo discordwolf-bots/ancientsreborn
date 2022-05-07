@@ -1,7 +1,7 @@
 import { Emoji } from '../../../constants';
 import { SkillsEnum } from '../../types';
-import Armour from './armour/index';
-import Weapons from './weapons/index';
+import { Armour } from './armour/index';
+import { Weapons } from './weapons/index';
 
 const Blacksmithing = {
 	aliases: ['blacksmithing', 'bs', 'smithing'],

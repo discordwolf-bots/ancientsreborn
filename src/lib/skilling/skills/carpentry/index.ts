@@ -1,10 +1,10 @@
 import { Emoji } from '../../../constants';
 import { SkillsEnum } from '../../types';
-import carpentryItems from './craftables';
+import { Craftables } from './craftables';
 
 const Blacksmithing = {
 	aliases: ['carpentry'],
-	carpentryItems,
+	Craftables,
 	id: SkillsEnum.Carpentry,
 	emoji: Emoji.Carpentry,
 	name: 'Carpentry'
