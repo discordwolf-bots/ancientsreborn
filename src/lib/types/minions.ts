@@ -10,6 +10,30 @@ export interface ActivityTaskOptions {
 	channelID: string;
 }
 
+/**
+ *  Mining,
+	Fishing,
+	Woodcutting,
+	Gathering,
+	Metallurgy,
+	Blacksmithing,
+	Cooking,
+	Carpentry,
+	Weaving,
+	Fletching,
+	Tailoring,
+ */
+
+export interface GatheringActivityTaskOptions extends ActivityTaskOptions {
+	resourceID: number;
+	quantity: number;
+}
+
+export interface ProductionActivityTaskOptions extends ActivityTaskOptions {
+	produceID: number;
+	quantity: number;
+}
+
 export interface ActivityTaskOptionsWithQuantity extends ActivityTaskOptions {
 	quantity: number;
 }
@@ -21,21 +45,6 @@ export interface CookingActivityTaskOptions extends ActivityTaskOptions {
 
 export interface MonsterActivityTaskOptions extends ActivityTaskOptions {
 	monsterID: number;
-	quantity: number;
-}
-
-export interface FishingActivityTaskOptions extends ActivityTaskOptions {
-	fishID: number;
-	quantity: number;
-}
-
-export interface MiningActivityTaskOptions extends ActivityTaskOptions {
-	oreID: number;
-	quantity: number;
-}
-
-export interface WoodcuttingActivityTaskOptions extends ActivityTaskOptions {
-	logID: number;
 	quantity: number;
 }
 
