@@ -67,25 +67,18 @@ export default class extends Task {
 				guildsCount: this.client.guilds.cache.size,
 				membersCount: this.client.guilds.cache.reduce((acc, curr) => (acc += curr.memberCount || 0), 0),
 				timestamp: Math.floor(Date.now() / 1000),
-				clueTasksCount: taskCounts.Clue,
-				minigameTasksCount: taskCounts.Minigame,
 				monsterTasksCount: taskCounts.Monster,
 				skillingTasksCount: taskCounts.Skilling,
 				ironMinionsCount: numberOfIronmen,
 				minionsCount: numberOfMinions,
 				totalSacrificed,
 				totalGP,
-				dicingBank: this.client.settings.get(ClientSettings.EconomyStats.DicingBank),
 				duelTaxBank: this.client.settings.get(ClientSettings.EconomyStats.DuelTaxBank),
 				dailiesAmount: this.client.settings.get(ClientSettings.EconomyStats.DailiesAmount),
-				gpAlching: this.client.settings.get(ClientSettings.EconomyStats.GPSourceAlching),
 				gpPvm: this.client.settings.get(ClientSettings.EconomyStats.GPSourcePVMLoot),
 				gpSellingItems: this.client.settings.get(ClientSettings.EconomyStats.GPSourceSellingItems),
-				gpPickpocket: this.client.settings.get(ClientSettings.EconomyStats.GPSourcePickpocket),
 				gpOpen: this.client.settings.get(ClientSettings.EconomyStats.GPSourceOpen),
-				gpDice: this.client.settings.get(ClientSettings.EconomyStats.GPSourceDice),
-				gpDaily: this.client.settings.get(ClientSettings.EconomyStats.GPSourceDaily),
-				gpLuckypick: this.client.settings.get(ClientSettings.EconomyStats.GPSourceLuckyPick)
+				gpDaily: this.client.settings.get(ClientSettings.EconomyStats.GPSourceDaily)
 			}
 		});
 	}
