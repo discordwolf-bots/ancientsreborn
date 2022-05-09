@@ -38,7 +38,9 @@ export const Roles = {
 };
 
 export const enum Emoji {
+	Credits = '',
 	Joy = '😂',
+	Sad = '',
 	Diamond = '💎',
 	Fireworks = '🎆',
 	Tick = '✅',
@@ -95,11 +97,9 @@ export const enum Emoji {
 	Skiller = '<:skiller:802136963775463435>',
 	Incinerator = '<:incinerator:802136963674275882>',
 	CollectionLog = '<:collectionLog:802136964027121684>',
-	Minigames = '<:minigameIcon:630400565070921761>',
+	Dueler = '',
 	Skull = '<:Skull:802136963926065165>',
-	CombatSword = '<:combat:802136963956080650>',
-	OSRSSkull = '<:skull:863392427040440320>',
-	SOTWTrophy = '<:SOTWtrophy:842938096097820693>'
+	CombatSword = '<:combat:802136963956080650>'
 }
 
 export const enum ReactionEmoji {
@@ -117,84 +117,17 @@ export const enum Color {
 }
 
 export const enum Tasks {
-	AgilityActivity = 'agilityActivity',
-	CookingActivity = 'cookingActivity',
 	MonsterActivity = 'monsterActivity',
 	GroupMonsterActivity = 'groupMonsterActivity',
-	ClueActivity = 'clueActivity',
-	FishingActivity = 'fishingActivity',
-	MiningActivity = 'miningActivity',
-	SmeltingActivity = 'smeltingActivity',
-	SmithingActivity = 'smithingActivity',
-	WoodcuttingActivity = 'woodcuttingActivity',
-	RunecraftActivity = 'runecraftActivity',
-	FiremakingActivity = 'firemakingActivity',
-	CraftingActivity = 'craftingActivity',
-	BuryingActivity = 'buryingActivity',
-	OfferingActivity = 'offeringActivity',
-	FletchingActivity = 'fletchingActivity',
-	FarmingActivity = 'farmingActivity',
-	HerbloreActivity = 'herbloreActivity',
-	HunterActivity = 'hunterActivity',
-	ConstructionActivity = 'constructionActivity',
 	QuestingActivity = 'questingActivity',
-	FightCavesActivity = 'fightCavesActivity',
-	WintertodtActivity = 'wintertodtActivity',
-	TemporossActivity = 'temporossActivity',
-	AlchingActivity = 'alchingActivity',
-	NightmareActivity = 'nightmareActivity',
-	AnimatedArmourActivity = 'animatedArmourActivity',
-	CyclopsActivity = 'cyclopsActivity',
-	SepulchreActivity = 'sepulchreActivity',
-	PlunderActivity = 'plunderActivity',
-	FishingTrawler = 'trawlerActivity',
-	ZalcanoActivity = 'zalcanoActivity',
-	SawmillActivity = 'sawmillActivity',
-	PickpocketActivity = 'pickpocketActivity',
-	Enchanting = 'enchantingActivity',
-	Casting = 'castingActivity',
-	GloryCharging = 'gloryChargingActivity',
-	WealthCharging = 'wealthChargingActivity',
-	TitheFarmActivity = 'titheFarmActivity',
-	BarbarianAssault = 'barbarianAssaultActivity',
-	AgilityArena = 'agilityArenaActivity',
-	ChampionsChallenge = 'championsChallengeActivity',
-	BirdhouseActivity = 'birdhouseActivity',
-	AerialFishingActivity = 'aerialFishingActivity',
-	DriftNetActivity = 'driftNetActivity',
-	MahoganyHomes = 'mahoganyHomesActivity',
-	GnomeRestaurant = 'gnomeRestaurantActivity',
-	SoulWars = 'soulWarsActivity',
-	RoguesDenMaze = 'roguesDenMazeActivity',
-	Gauntlet = 'gauntletActivity',
-	CastleWars = 'castleWarsActivity',
-	MageArena = 'mageArenaActivity',
-	Raids = 'raidsActivity',
-	Collecting = 'collectingActivity',
-	MageTrainingArena = 'mageTrainingArenaActivity',
-	BlastFurnaceActivity = 'blastFurnaceActivity',
-	MageArena2 = 'mageArena2Activity',
-	BigChompyBirdHunting = 'chompyHuntActivity',
-	DarkAltar = 'darkAltarActivity',
-	TrekkingActivity = 'templeTrekkingActivity',
-	RevenantsActivity = 'revenantsActivity',
-	PestControl = 'pestControlActivity',
-	VolcanicMine = 'volcanicMineActivity',
-	KourendFavour = 'kourendFavourActivity',
-	Inferno = 'infernoActivity',
-	TearsOfGuthix = 'tearsOfGuthixActivity',
-	ToB = 'tobActivity',
-	LastManStanding = 'lmsActivity',
-	BirthdayEvent = 'birthdayEventActivity',
-	TokkulShop = 'tokkulShopActivity',
-	Nex = 'nexActivity'
+	GatheringActivity = 'gatheringSkillActivity',
+	ProductionActivity = 'productionSkillActivity',
+	EnhancingActivity = 'enhancingActivity'
 }
 
 export enum ActivityGroup {
 	Skilling = 'Skilling',
-	Clue = 'Clue',
-	Monster = 'Monster',
-	Minigame = 'Minigame'
+	Monster = 'Monster'
 }
 
 export const enum Events {
@@ -211,7 +144,7 @@ export const enum Events {
 
 export const rootFolder = join(__dirname, '..', '..', '..');
 
-export const COINS_ID = 995;
+export const CREDITS_ID = 1;
 
 export const enum PerkTier {
 	/**
@@ -321,8 +254,7 @@ export const enum BadgesEnum {
 	TopSacrifice = 8,
 	TopSkiller = 9,
 	TopCollector = 10,
-	TopMinigame = 11,
-	SotWTrophy = 12
+	TopDueler = 11
 }
 
 export const badges: { [key: number]: string } = {
@@ -337,8 +269,7 @@ export const badges: { [key: number]: string } = {
 	[BadgesEnum.TopSacrifice]: Emoji.Incinerator,
 	[BadgesEnum.TopSkiller]: Emoji.Skiller,
 	[BadgesEnum.TopCollector]: Emoji.CollectionLog,
-	[BadgesEnum.TopMinigame]: Emoji.MinigameIcon,
-	[BadgesEnum.SotWTrophy]: Emoji.SOTWTrophy
+	[BadgesEnum.TopDueler]: Emoji.Dueler
 };
 
 export const MAX_QP = 284;
@@ -400,8 +331,16 @@ export const skillEmoji = {
 	combat: '<:combat:802136963956080650>'
 };
 
-export const LEVEL_99_XP = 13_034_431;
-export const MAX_LEVEL = 99;
+export const LEVEL_60_XP = 9_999_990;
+export const LEVEL_100_XP = 9_999_990;
+export const LEVEL_150_XP = 33_749_990;
+export const LEVEL_200_XP = 79_999_990;
+export const LEVEL_250_XP = 156_249_990;
+export const LEVEL_300_XP = 269_999_990;
+export const LEVEL_350_XP = 428_749_990;
+export const LEVEL_400_XP = 639_999_990;
+export const LEVEL_404_XP = 659_392_630;
+export const MAX_LEVEL = 404;
 export const MAX_TOTAL_LEVEL = Object.values(SkillsEnum).length * MAX_LEVEL;
 export const SILENT_ERROR = 'SILENT_ERROR';
 
