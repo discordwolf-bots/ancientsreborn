@@ -328,33 +328,33 @@ async function handleCombatOptions(user: KlasaUser, command: 'add' | 'remove' | 
 	return `${newcbopt.name} is now ${nextBool ? 'enabled' : 'disabled'} for you.${warningMsg}`;
 }
 
-async function handleRSN(user: KlasaUser, newRSN: string) {
+async function handleAccount(user: KlasaUser, newAccount: string) {
 	const settings = await mahojiUsersSettingsFetch(user.id);
-	const { RSN } = settings;
-	if (!newRSN && RSN) {
-		return `Your current RSN is: \`${RSN}\``;
+	const { Account } = settings;
+	if (!newAccount && Account) {
+		return `Your current Account is: \`${Account}\``;
 	}
 
-	if (!newRSN && !RSN) {
-		return "You don't have an RSN set. You can set one like this: `/config user set_rsn <username>`";
+	if (!newAccount && !Account) {
+		return "You don't have an Account set. You can set one like this: `/config user set_Account <username>`";
 	}
 
-	newRSN = newRSN.toLowerCase();
-	if (!newRSN.match('^[A-Za-z0-9]{1}[A-Za-z0-9 -_\u00A0]{0,11}$')) {
+	newAccount = newAccount.toLowerCase();
+	if (!newAccount.match('^[A-Za-z0-9]{1}[A-Za-z0-9 -_\u00A0]{0,11}$')) {
 		return 'That username is not valid.';
 	}
 
-	if (RSN === newRSN) {
-		return `Your RSN is already set to \`${RSN}\``;
+	if (Account === newAccount) {
+		return `Your Account is already set to \`${Account}\``;
 	}
 
 	await mahojiUserSettingsUpdate(client, user.id, {
-		RSN: newRSN
+		Account: newAccount
 	});
-	if (RSN !== null) {
-		return `Changed your RSN from \`${RSN}\` to \`${newRSN}\``;
+	if (Account !== null) {
+		return `Changed your Account from \`${Account}\` to \`${newAccount}\``;
 	}
-	return `Your RSN has been set to: \`${newRSN}\`.`;
+	return `Your Account has been set to: \`${newAccount}\`.`;
 }
 
 async function setSmallBank(user: User, choice: 'enable' | 'disable') {
@@ -544,13 +544,13 @@ export const configCommand: OSBMahojiCommand = {
 				},
 				{
 					type: ApplicationCommandOptionType.Subcommand,
-					name: 'set_rsn',
-					description: 'Set your RuneScape username in the bot.',
+					name: 'set_account',
+					description: 'Set your Ancients Reborn username in the bot.',
 					options: [
 						{
 							type: ApplicationCommandOptionType.String,
 							name: 'username',
-							description: 'Your RuneScape username.',
+							description: 'Your Ancients Reborn username.',
 							required: true
 						}
 					]
@@ -605,7 +605,7 @@ export const configCommand: OSBMahojiCommand = {
 		user?: {
 			random_events?: { choice: 'enable' | 'disable' };
 			combat_options?: { action: 'add' | 'remove' | 'list' | 'help'; input: string };
-			set_rsn?: { username: string };
+			set_account?: { username: string };
 			small_bank?: { choice: 'enable' | 'disable' };
 			bg_color?: { color?: string };
 		};
@@ -639,8 +639,8 @@ export const configCommand: OSBMahojiCommand = {
 			if (options.user.combat_options) {
 				return handleCombatOptions(user, options.user.combat_options.action, options.user.combat_options.input);
 			}
-			if (options.user.set_rsn) {
-				return handleRSN(user, options.user.set_rsn.username);
+			if (options.user.set_account) {
+				return handleAccount(user, options.user.set_account.username);
 			}
 			if (options.user.small_bank) {
 				return setSmallBank(mahojiUser, options.user.small_bank.choice);

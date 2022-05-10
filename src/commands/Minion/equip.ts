@@ -3,7 +3,6 @@ import { CommandStore, KlasaMessage } from 'klasa';
 import { Bank } from 'oldschooljs';
 import { EquipmentSlot, Item } from 'oldschooljs/dist/meta/types';
 
-import { PATRON_ONLY_GEAR_SETUP, PerkTier } from '../../lib/constants';
 import { GearSetupType, GearSetupTypes, resolveGearTypeSetting } from '../../lib/gear';
 import { generateGearImage } from '../../lib/gear/functions/generateGearImage';
 import { requiresMinion } from '../../lib/minions/decorators';
@@ -20,8 +19,12 @@ export default class extends BotCommand {
 			altProtection: true,
 			usage: `<${GearSetupTypes.join('|')}> [quantity:integer{1}] (item:...item)`,
 			usageDelim: ' ',
-			description: 'Equips an item to one of your gear setups. (melee/range/range/skilling/misc)',
-			examples: ['+equip skilling graceful hood', '+equip melee bandos godsword', '+equip mage staff of fire'],
+			description: 'Equips an item to one of your gear setups. (melee/ranged/magic/skilling)',
+			examples: [
+				'+equip skilling mythical pickaxe',
+				'+equip melee dianium plated helmet',
+				'+equip magic dianium staff +1'
+			],
 			categoryFlags: ['minion']
 		});
 	}
@@ -47,10 +50,6 @@ export default class extends BotCommand {
 
 		const { slot } = itemToEquip.equipment!;
 		const currentEquippedGear = msg.author.getGear(gearType).raw();
-
-		if (gearType === 'other' && msg.author.perkTier < PerkTier.Four) {
-			return msg.channel.send(PATRON_ONLY_GEAR_SETUP);
-		}
 
 		/**
 		 * Handle 2h items
@@ -89,9 +88,6 @@ export default class extends BotCommand {
 			}
 		}
 
-		if (gearType === 'wildy') {
-			await msg.confirm(WILDY_PRESET_WARNING_MESSAGE);
-		}
 		/**
 		 * If there's already an item equipped in this slot, unequip it,
 		 * then recursively call this function again.

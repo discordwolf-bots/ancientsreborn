@@ -1,9 +1,9 @@
 import { codeBlock, inlineCode } from '@discordjs/builders';
 import { Duration, Time } from '@sapphire/time-utilities';
 import { Type } from '@sapphire/type';
-import { MessageAttachment, MessageEmbed, MessageOptions, TextChannel, Util } from 'discord.js';
+import { MessageAttachment, MessageEmbed, MessageOptions, Util } from 'discord.js';
 import { notEmpty, uniqueArr } from 'e';
-import { ArrayActions, CommandStore, KlasaClient, KlasaMessage, KlasaUser, Stopwatch, util } from 'klasa';
+import { CommandStore, KlasaClient, KlasaMessage, KlasaUser, Stopwatch, util } from 'klasa';
 import { bulkUpdateCommands } from 'mahoji/dist/lib/util';
 import { inspect } from 'node:util';
 import fetch from 'node-fetch';
@@ -11,38 +11,22 @@ import { Bank, Items } from 'oldschooljs';
 import { Item } from 'oldschooljs/dist/meta/types';
 
 import { client, mahojiClient } from '..';
-import { CLIENT_ID, production } from '../config';
-import {
-	badges,
-	BitField,
-	BitFieldData,
-	Channel,
-	DISABLED_COMMANDS,
-	Emoji,
-	NEX_ID,
-	Roles,
-	SupportServer
-} from '../lib/constants';
+import { CLIENT_ID } from '../config';
+import { badges, BitField, BitFieldData, Channel, DISABLED_COMMANDS, Emoji, SupportServer } from '../lib/constants';
 import { getSimilarItems } from '../lib/data/similarItems';
 import { evalMathExpression } from '../lib/expressionParser';
-import { convertStoredActivityToFlatActivity, countUsersWithItemInCl, prisma } from '../lib/settings/prisma';
+import { countUsersWithItemInCl, prisma } from '../lib/settings/prisma';
 import { cancelTask, minionActivityCache, minionActivityCacheDelete } from '../lib/settings/settings';
 import { ClientSettings } from '../lib/settings/types/ClientSettings';
 import { UserSettings } from '../lib/settings/types/UserSettings';
-import { calculateNexDetails, nexGearStats } from '../lib/simulation/nex';
 import { BotCommand } from '../lib/structures/BotCommand';
 import {
 	asyncExec,
-	calcPerHour,
-	channelIsSendable,
 	cleanString,
 	convertBankToPerHourStats,
 	formatDuration,
 	getSupportGuild,
 	getUsername,
-	isGroupActivity,
-	isRaidsActivity,
-	isTobActivity,
 	itemNameFromID,
 	stringMatches
 } from '../lib/util';
@@ -52,53 +36,8 @@ import { logError } from '../lib/util/logError';
 import { sendToChannelID } from '../lib/util/webhook';
 import { Cooldowns } from '../mahoji/lib/Cooldowns';
 import { allAbstractCommands } from '../mahoji/lib/util';
-import { mahojiUsersSettingsFetch } from '../mahoji/mahojiSettings';
 import BankImageTask from '../tasks/bankImage';
 import PatreonTask from '../tasks/patreon';
-
-async function checkMassesCommand(msg: KlasaMessage) {
-	if (!msg.guild) return null;
-	const channelIDs = msg.guild.channels.cache.filter(c => c.type === 'text').map(c => BigInt(c.id));
-
-	const masses = (
-		await prisma.activity.findMany({
-			where: {
-				completed: false,
-				group_activity: true,
-				channel_id: { in: channelIDs }
-			},
-			orderBy: {
-				finish_date: 'asc'
-			}
-		})
-	)
-		.map(convertStoredActivityToFlatActivity)
-		.filter(m => (isRaidsActivity(m) || isGroupActivity(m) || isTobActivity(m)) && m.users.length > 1);
-
-	if (masses.length === 0) {
-		return msg.channel.send('There are no active masses in this server.');
-	}
-	const now = Date.now();
-	const massStr = masses
-		.map(m => {
-			const remainingTime = isTobActivity(m)
-				? m.finishDate - m.duration + m.fakeDuration - now
-				: m.finishDate - now;
-			if (isGroupActivity(m)) {
-				return [
-					remainingTime,
-					`${m.type}${isRaidsActivity(m) && m.challengeMode ? ' CM' : ''}: ${
-						m.users.length
-					} users returning to <#${m.channelID}> in ${formatDuration(remainingTime)}`
-				];
-			}
-		})
-		.sort((a, b) => (a![0] < b![0] ? -1 : a![0] > b![0] ? 1 : 0))
-		.map(m => m![1])
-		.join('\n');
-	return msg.channel.send(`**Masses in this server:**
-${massStr}`);
-}
 
 function itemSearch(msg: KlasaMessage, name: string) {
 	const items = Items.filter(i => {
@@ -258,69 +197,6 @@ export default class extends BotCommand {
 		const isOwner = this.client.owners.has(msg.author);
 
 		switch (cmd.toLowerCase()) {
-			case 'nexsim': {
-				if (production) return;
-				let str =
-					'Simulating Nex kills with 2-10 team sizes, assuming each team member is a copy of your account.\n';
-				const user = await mahojiUsersSettingsFetch(msg.author.id);
-				const gearStats = nexGearStats(user);
-				const kc = msg.flagArgs.kc ?? (user.monsterScores as any)[NEX_ID];
-				(user.monsterScores as any)[NEX_ID] = kc;
-				str += `Offence[${gearStats.offence.toFixed(1)}] Defence[${gearStats.defence.toFixed(1)}] KC[${
-					(user.monsterScores as any)[NEX_ID]
-				}]\n\n`;
-				for (let i = 2; i < 10; i++) {
-					const res = calculateNexDetails({ team: new Array(i).fill(user) });
-					str += `**${i}:** `;
-					if (!res.quantity) {
-						str += 'Died';
-					} else {
-						str += `${calcPerHour(res.quantity, res.duration).toFixed(1)}/hr (${
-							res.quantity
-						} kills in ${formatDuration(res.duration)} - ${formatDuration(
-							res.duration / res.quantity,
-							true
-						)} per kill)`;
-					}
-					str += '\n';
-				}
-				return msg.channel.send(str);
-			}
-			case 'ping': {
-				if (!msg.guild || msg.guild.id !== SupportServer) return;
-				if (!input || typeof input !== 'string') return;
-				const roles = await prisma.pingableRole.findMany();
-				const roleToPing = roles.find(i => i.id === Number(input) || stringMatches(i.name, input));
-				if (!roleToPing) {
-					return msg.channel.send('No role with that name found.');
-				}
-				if (!msg.member) return;
-				if (!msg.member.roles.cache.has(Roles.MassHoster)) {
-					return;
-				}
-				return msg.channel.send(
-					`<@&${roleToPing.role_id}> You were pinged because you have this role, you can remove it using \`+roles ${roleToPing.name}\`.`
-				);
-			}
-			case 'checkmasses': {
-				return checkMassesCommand(msg);
-			}
-			case 'pingmass':
-			case 'pm': {
-				if (!msg.guild || msg.guild.id !== SupportServer) return;
-				if (!msg.member) return;
-				if (!(msg.channel instanceof TextChannel)) return;
-				if (!msg.member.roles.cache.has(Roles.MassHoster) && !msg.member.roles.cache.has(Roles.Moderator)) {
-					return;
-				}
-				if (msg.channel.id === Channel.BarbarianAssault) {
-					return msg.channel.send(`<@&${Roles.BarbarianAssaultMass}>`);
-				}
-				if (msg.channel.parentID === Channel.ChambersOfXeric) {
-					return msg.channel.send(`<@&${Roles.ChambersOfXericMass}>`);
-				}
-				return msg.channel.send(`<@&${Roles.Mass}>`);
-			}
 			case 'check':
 			case 'c': {
 				let u = input;
@@ -378,18 +254,6 @@ export default class extends BotCommand {
 			case 'is': {
 				if (typeof input !== 'string') return;
 				return itemSearch(msg, input);
-			}
-			case 'pingtesters': {
-				if (!msg.guild || msg.guild.id !== SupportServer) return;
-				if (
-					!msg.guild ||
-					msg.channel.id !== Channel.TestingMain ||
-					!msg.member ||
-					(!msg.member.roles.cache.has(Roles.Moderator) && !msg.member.roles.cache.has(Roles.Contributor))
-				) {
-					return;
-				}
-				return msg.channel.send(`<@&${Roles.Testers}>`);
 			}
 			case 'git': {
 				try {
@@ -464,31 +328,6 @@ ${
 
 		// Mod commands
 		switch (cmd.toLowerCase()) {
-			case 'blacklist':
-			case 'bl': {
-				if (!input || !(input instanceof KlasaUser)) return;
-				if (str instanceof KlasaUser) return;
-				const reason = str;
-				const entry = this.client.settings.get(ClientSettings.UserBlacklist);
-
-				const alreadyBlacklisted = entry.includes(input.id);
-
-				this.client.settings.update(ClientSettings.UserBlacklist, input.id, {
-					arrayAction: alreadyBlacklisted ? ArrayActions.Remove : ArrayActions.Add
-				});
-				const emoji = getSupportGuild(this.client)?.emojis.cache.random()?.toString();
-				const newStatus = `${alreadyBlacklisted ? 'un' : ''}blacklisted`;
-
-				const channel = this.client.channels.cache.get(Channel.BlacklistLogs);
-				if (channelIsSendable(channel)) {
-					channel.send(
-						`\`${input.username}\` was ${newStatus} by ${msg.author.username} for \`${
-							reason ?? 'no reason'
-						}\`.`
-					);
-				}
-				return msg.channel.send(`${emoji} Successfully ${newStatus} ${input.username}.`);
-			}
 			case 'addimalt': {
 				if (!input || !(input instanceof KlasaUser)) return;
 				if (!str || !(str instanceof KlasaUser)) return;
@@ -578,7 +417,7 @@ ${
 				await input.settings.update(UserSettings.BitField, BitField.BypassAgeRestriction, {
 					arrayAction: 'add'
 				});
-				return msg.channel.send(`${Emoji.RottenPotato} Bypassed age restriction for ${input.username}.`);
+				return msg.channel.send(`Bypassed age restriction for ${input.username}.`);
 			}
 			case 'gptrack': {
 				return msg.channel.send(`

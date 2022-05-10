@@ -21,20 +21,12 @@ export function resolveGearTypeSetting(type: GearSetupType) {
 	switch (type) {
 		case 'melee':
 			return UserSettings.Gear.Melee;
-		case 'mage':
-			return UserSettings.Gear.Mage;
-		case 'range':
+		case 'magic':
+			return UserSettings.Gear.Magic;
+		case 'ranged':
 			return UserSettings.Gear.Range;
 		case 'skilling':
 			return UserSettings.Gear.Skilling;
-		case 'misc':
-			return UserSettings.Gear.Misc;
-		case 'wildy':
-			return UserSettings.Gear.Wildy;
-		case 'fashion':
-			return UserSettings.Gear.Fashion;
-		case 'other':
-			return UserSettings.Gear.Other;
 	}
 }
 
@@ -45,24 +37,19 @@ export function constructGearSetup(setup: PartialGearSetup): Gear {
 	return new Gear({
 		'2h': setup['2h'] ? { item: itemID(setup['2h']), quantity: 1 } : null,
 		ammo: setup.ammo ? { item: itemID(setup.ammo), quantity: 1 } : null,
-		body: setup.body ? { item: itemID(setup.body), quantity: 1 } : null,
+		chest: setup.chest ? { item: itemID(setup.chest), quantity: 1 } : null,
 		cape: setup.cape ? { item: itemID(setup.cape), quantity: 1 } : null,
-		feet: setup.feet ? { item: itemID(setup.feet), quantity: 1 } : null,
-		hands: setup.hands ? { item: itemID(setup.hands), quantity: 1 } : null,
-		head: setup.head ? { item: itemID(setup.head), quantity: 1 } : null,
+		boots: setup.boots ? { item: itemID(setup.boots), quantity: 1 } : null,
+		gloves: setup.gloves ? { item: itemID(setup.gloves), quantity: 1 } : null,
+		helm: setup.helm ? { item: itemID(setup.helm), quantity: 1 } : null,
 		legs: setup.legs ? { item: itemID(setup.legs), quantity: 1 } : null,
 		neck: setup.neck ? { item: itemID(setup.neck), quantity: 1 } : null,
 		ring: setup.ring ? { item: itemID(setup.ring), quantity: 1 } : null,
 		shield: setup.shield ? { item: itemID(setup.shield), quantity: 1 } : null,
-		weapon: setup.weapon ? { item: itemID(setup.weapon), quantity: 1 } : null
+		weapon: setup.weapon ? { item: itemID(setup.weapon), quantity: 1 } : null,
+		belt: setup.belt ? { item: itemID(setup.belt), quantity: 1 } : null,
+		gems: setup.gems ? { item: itemID(setup.gems), quantity: 1 } : null
 	});
-}
-
-export function hasGracefulEquipped(setup: Gear) {
-	return setup.hasEquipped(
-		['Graceful hood', 'Graceful top', 'Graceful legs', 'Graceful boots', 'Graceful gloves', 'Graceful cape'],
-		true
-	);
 }
 
 export function gearPresetToString(gearPreset: GearPreset) {
@@ -71,7 +58,7 @@ export function gearPresetToString(gearPreset: GearPreset) {
 	for (const key of keys) {
 		if (key === 'user_id' || key === 'ammo_qty' || key === 'name') continue;
 		let val = gearPreset[key];
-		if (val) parsed.push(itemNameFromID(val));
+		if (val) parsed.push(itemNameFromID(val as string));
 	}
 	if (gearPreset.ammo) {
 		parsed.push(`${gearPreset.ammo_qty}x ${itemNameFromID(gearPreset.ammo)}`);

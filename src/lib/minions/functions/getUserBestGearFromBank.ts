@@ -18,7 +18,7 @@ function getItemScore(item: Item) {
 export default function getUserBestGearFromBank(
 	userBank: ItemBank,
 	userGear: Gear,
-	gearType: GearSetupType,
+	_gearType: GearSetupType,
 	skills: Skills,
 	type: string,
 	style: string,
@@ -34,33 +34,13 @@ export default function getUserBestGearFromBank(
 	let scoreWsExtra = 0;
 
 	// Get primary stat to sort by
-	const gearStat: GearStat = `${type}_${style}` as GearStat;
+	const gearStat: GearStat = `${type}${style}` as GearStat;
 	let gearStatExtra: GearStat | null = null;
 
 	// Get extra settings (prayer or strength)
 	switch (extra) {
-		case 'strength':
-			switch (gearType) {
-				case 'skilling':
-				case 'misc':
-				case 'fashion':
-				case 'other':
-					break;
-				case 'melee':
-					gearStatExtra = GearStat.MeleeStrength;
-					break;
-				case 'range':
-					gearStatExtra = GearStat.RangedStrength;
-					break;
-				case 'mage':
-					gearStatExtra = GearStat.MagicDamage;
-					break;
-				case 'wildy':
-					break;
-			}
-			break;
-		case 'prayer':
-			gearStatExtra = GearStat.Prayer;
+		case 'health':
+			gearStatExtra = GearStat.Health;
 			break;
 		default:
 			break;
@@ -70,16 +50,18 @@ export default function getUserBestGearFromBank(
 	const equipables: Record<EquipmentSlot, number[]> = {
 		'2h': [],
 		ammo: [],
-		body: [],
+		chest: [],
 		cape: [],
-		feet: [],
-		hands: [],
-		head: [],
+		boots: [],
+		gloves: [],
+		helm: [],
 		legs: [],
 		neck: [],
 		ring: [],
 		shield: [],
-		weapon: []
+		weapon: [],
+		belt: [],
+		gems: []
 	};
 
 	// Read current equipped user gear, removes it and add to bank

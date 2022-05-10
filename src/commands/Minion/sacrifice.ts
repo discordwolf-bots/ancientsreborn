@@ -2,7 +2,6 @@ import { CommandStore, KlasaClient, KlasaMessage, KlasaUser } from 'klasa';
 import { Bank, Util } from 'oldschooljs';
 
 import { Events } from '../../lib/constants';
-import { cats } from '../../lib/growablePets';
 import minionIcons from '../../lib/minions/data/minionIcons';
 import { ClientSettings } from '../../lib/settings/types/ClientSettings';
 import { UserSettings } from '../../lib/settings/types/UserSettings';
@@ -48,32 +47,6 @@ export default class extends BotCommand {
 				`No items were provided.\nYour current sacrificed value is: ${sacVal.toLocaleString()} (${Util.toKMB(
 					sacVal
 				)})`
-			);
-		}
-
-		// Handle sacrificing cats
-		if (cats.some(cat => bankToSac.has(cat))) {
-			if (bankToSac.length !== 1) return msg.channel.send("Cat's don't like being sacrificed with other things!");
-			const [item, quantity] = bankToSac.items()[0];
-			const deathRunes = quantity * 200;
-
-			await msg.confirm(
-				`${msg.author.username}.. are you sure you want to sacrifice your ${item.name}${
-					bankToSac.length > 1 ? 's' : ''
-				} for ${deathRunes} death runes? *Note: These are cute, fluffy little cats.*`
-			);
-
-			const loot = new Bank().add('Death rune', deathRunes);
-			await msg.author.removeItemsFromBank(bankToSac);
-			await msg.author.addItemsToBank({ items: loot, collectionLog: false });
-			const sacBank = await trackSacBank(msg.author, bankToSac);
-			let totalCatsSacrificed = 0;
-			for (const cat of cats) {
-				totalCatsSacrificed += sacBank.amount(cat);
-			}
-
-			return msg.channel.send(
-				`${msg.author.username}, you sacrificed ${bankToSac} and received ${loot}. You've sacrificed ${totalCatsSacrificed} cats.`
 			);
 		}
 

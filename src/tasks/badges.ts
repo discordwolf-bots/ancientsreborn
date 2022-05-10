@@ -17,11 +17,9 @@ export default class extends Task {
 
 		const usersWithBadges = this.client.users.cache.filter(u => u.settings.get(UserSettings.Badges).length > 0);
 		for (const user of usersWithBadges.values()) {
-			const RSN = user.settings.get(UserSettings.RSN);
-			if (!RSN) continue;
 			const userBadges = user.settings.get(UserSettings.Badges).map((badge: number) => badges[badge]);
 
-			newCache.set(RSN.toLowerCase(), userBadges.join(' '));
+			newCache.set(user.id, userBadges.join(' '));
 		}
 
 		this.client._badgeCache = newCache;

@@ -24,24 +24,46 @@ export function calcMaxTripLength(user: User | KlasaUser, activity?: activity_ty
 	max += patronMaxTripCalc(user);
 
 	switch (activity) {
-		case 'Nightmare':
 		case 'GroupMonsterKilling':
-		case 'MonsterKilling':
-		case 'Wintertodt':
-		case 'Zalcano':
-		case 'BarbarianAssault':
-		case 'AnimatedArmour':
-		case 'Sepulchre':
-		case 'Pickpocket':
-		case 'SoulWars':
-		case 'Cyclops': {
-			const hpLevel = skillLevel(user, SkillsEnum.Hitpoints);
-			const hpPercent = calcWhatPercent(hpLevel - 10, 99 - 10);
-			max += calcPercentOfNum(hpPercent, Time.Minute * 5);
+		case 'MonsterKilling': {
+			const hpLevel = skillLevel(user, SkillsEnum.Vitality);
+			const hpPercent = calcWhatPercent(hpLevel, 404);
+			max += calcPercentOfNum(hpPercent, Time.Minute * 20);
 			break;
 		}
-		case 'Alching': {
-			max *= 2;
+		case 'Mining':
+		case 'Fishing':
+		case 'Woodcutting':
+		case 'Gathering': {
+			const gatheringLevelTotal =
+				skillLevel(user, SkillsEnum.Mining) +
+				skillLevel(user, SkillsEnum.Fishing) +
+				skillLevel(user, SkillsEnum.Woodcutting) +
+				skillLevel(user, SkillsEnum.Gathering);
+			const gatheringTotalPercent = calcWhatPercent(gatheringLevelTotal, 404 * 4);
+			max += calcPercentOfNum(gatheringTotalPercent, Time.Minute * 60);
+			break;
+		}
+		case 'Metallurgy':
+		case 'Blacksmithing': {
+			const metalLevelTotal =
+				skillLevel(user, SkillsEnum.Metallurgy) + skillLevel(user, SkillsEnum.Blacksmithing);
+			const metalPercent = calcWhatPercent(metalLevelTotal, 404 * 2);
+			max += calcPercentOfNum(metalPercent, Time.Minute * 30);
+			break;
+		}
+		case 'Fletching':
+		case 'Carpentry': {
+			const woodLevelTotal = skillLevel(user, SkillsEnum.Fletching) + skillLevel(user, SkillsEnum.Carpentry);
+			const woodPercent = calcWhatPercent(woodLevelTotal, 404 * 2);
+			max += calcPercentOfNum(woodPercent, Time.Minute * 30);
+			break;
+		}
+		case 'Weaving':
+		case 'Tailoring': {
+			const clothLevelTotal = skillLevel(user, SkillsEnum.Weaving) + skillLevel(user, SkillsEnum.Tailoring);
+			const clothPercent = calcWhatPercent(clothLevelTotal, 404 * 2);
+			max += calcPercentOfNum(clothPercent, Time.Minute * 30);
 			break;
 		}
 		default: {

@@ -82,10 +82,10 @@ export default class extends BotCommand {
 		}
 
 		if (!(await this.checkBal(msg.author, amount)) || !(await this.checkBal(user, amount))) {
-			return msg.channel.send(Emoji.Bpaptu);
+			return msg.channel.send(Emoji.Sad);
 		}
 
-		const b = new Bank().add('Coins', amount);
+		const b = new Bank().add('Credits', amount);
 		await msg.author.removeItemsFromBank(b);
 		await user.removeItemsFromBank(b);
 

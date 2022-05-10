@@ -21,8 +21,6 @@ export default class extends Task {
 
 	async calculateMinionTaskCounts() {
 		const minionTaskCounts: Record<ActivityGroup, number> = {
-			[ActivityGroup.Clue]: 0,
-			[ActivityGroup.Minigame]: 0,
 			[ActivityGroup.Monster]: 0,
 			[ActivityGroup.Skilling]: 0
 		};

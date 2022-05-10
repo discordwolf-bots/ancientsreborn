@@ -43,10 +43,8 @@ model Analytic {
   dailiesAmount      BigInt?
   gpSellingItems     BigInt?
   gpPvm              BigInt?
-  gpDice             BigInt?
   gpOpen             BigInt?
   gpDaily            BigInt?
-  gpLuckypick        BigInt?
 
   @@map("analytics_table")
 }
@@ -59,10 +57,7 @@ model ClientStorage {
   totalCommandsUsed            Int      @default(0)
   prices                       Json     @default("{}") @db.Json
   sold_items_bank              Json     @default("{}") @db.Json
-  collecting_cost              Json     @default("{}") @db.Json
-  collecting_loot              Json     @default("{}") @db.Json
   economyStats_duelTaxBank     Int      @default(0) @map("economyStats.duelTaxBank")
-  economyStats_dailiesAmount   Int      @default(0) @map("economyStats.dailiesAmount")
   economyStats_itemSellTaxBank Int      @default(0) @map("economyStats.itemSellTaxBank")
   economyStats_bankBgCostBank  Json     @default("{}") @map("economyStats.bankBgCostBank") @db.Json
   economyStats_sacrificedBank  Json     @default("{}") @map("economyStats.sacrificedBank") @db.Json
@@ -70,13 +65,10 @@ model ClientStorage {
   gp_sell                      BigInt   @default(0)
   gp_pvm                       BigInt   @default(0)
   gp_open                      BigInt   @default(0)
-  gp_daily                     BigInt   @default(0)
-  gp_luckypick                 BigInt   @default(0)
   locked_skills                Json[]   @db.Json
   custom_prices                Json     @default("{}") @db.Json
   create_cost                  Json     @default("{}") @db.Json
   create_loot                  Json     @default("{}") @db.Json
-  degraded_items_cost          Json     @default("{}") @db.Json
 
   disabled_commands            String[] @db.VarChar(32)
 
@@ -142,11 +134,6 @@ model NewUser {
   username      String? @db.VarChar(32)
   pizazz_points Int     @default(0)
 
-  // Relations
-  minigame_id  Int?         @unique
-  minigame     Minigame?    @relation(fields: [minigame_id], references: [id])
-  slayer_tasks SlayerTask[]
-
   @@map("new_users")
 }
 
@@ -158,60 +145,20 @@ model PingableRole {
   @@map("pingable_roles")
 }
 
-model PlayerOwnedHouse {
-  user_id            String @id @db.VarChar(19)
-  background_id      Int    @default(1)
-  altar              Int?
-  throne             Int?
-  mounted_cape       Int?
-  mounted_fish       Int?
-  mounted_head       Int?
-  mounted_item       Int?
-  jewellery_box      Int?
-  prayer_altar       Int?
-  spellbook_altar    Int?
-  guard              Int?
-  torch              Int?
-  dungeon_decoration Int?
-  prison             Int?
-  pool               Int?
-  teleport           Int?
-  garden_decoration  Int?
-
-  @@map("poh")
-}
-
-model SlayerTask {
-  id                 Int      @id @default(autoincrement())
-  created_at         DateTime @default(now()) @db.Timestamp(6)
-  quantity           Int      @db.SmallInt
-  quantity_remaining Int      @db.SmallInt
-  slayer_master_id   Int      @db.SmallInt
-  monster_id         Int
-  skipped            Boolean
-  user_id            String   @db.VarChar(19)
-  new_user           NewUser  @relation(fields: [user_id], references: [id])
-
-  @@index([user_id, quantity_remaining])
-  @@map("slayer_tasks")
-}
-
 model User {
   id                         String   @id @db.VarChar(19)
+  Account                    String?
   GP                         BigInt   @default(0)
   QP                         Int      @default(0)
-  RSN                        String?
   pets                       Json     @default("{}") @db.Json
   mounts                     Json     @default("{}") @db.Json
   badges                     Int[]
   bitfield                   Int[]
   favoriteItems              Int[]
-  favorite_alchables         Int[]
   favorite_food              Int[]
   sacrificedValue            BigInt   @default(0)
   bank                       Json     @default("{}") @db.Json
   collectionLogBank          Json     @default("{}") @db.JsonB
-  creatureScores             Json     @default("{}") @db.Json
   monsterScores              Json     @default("{}") @db.Json
   bankBackground             Int      @default(1)
   sacrificedBank             Json     @default("{}") @db.Json
@@ -236,9 +183,9 @@ model User {
   skills_metallurgy          BigInt   @default(0) @map("skills.metallurgy")
   skills_blacksmithing       BigInt   @default(0) @map("skills.blacksmithing")
   skills_cooking             BigInt   @default(0) @map("skills.cooking")
+  skills_fletching           BigInt   @default(0) @map("skills.fletching")
   skills_carpentry           BigInt   @default(0) @map("skills.carpentry")
   skills_weaving             BigInt   @default(0) @map("skills.weaving")
-  skills_fletching           BigInt   @default(0) @map("skills.fletching")
   skills_tailoring           BigInt   @default(0) @map("skills.tailoring")
   skills_strength            BigInt   @default(0) @map("skills.strength")
   skills_dexterity           BigInt   @default(0) @map("skills.dexterity")
@@ -248,10 +195,11 @@ model User {
   skills_piercing            BigInt   @default(0) @map("skills.piercing")
   skills_fencing             BigInt   @default(0) @map("skills.fencing")
   skills_heavyWeapons        BigInt   @default(0) @map("skills.heavyWeapons")
-  skills_magicStaffs         BigInt   @default(0) @map("skills.magicStaffs")
   skills_rangedWeapons       BigInt   @default(0) @map("skills.rangedWeapons")
-  gear_active                Json?    @map("gear.active") @db.Json
-  gear_secondary             Json?    @map("gear.secondary") @db.Json
+  skills_magicStaffs         BigInt   @default(0) @map("skills.magicStaffs")
+  gear_melee                 Json?    @map("gear.melee") @db.Json
+  gear_magic                 Json?    @map("gear.magic") @db.Json
+  gear_ranged                Json?    @map("gear.ranged") @db.Json
   gear_skilling              Json?    @map("gear.skilling") @db.Json
 
   premium_balance_tier        Int?
@@ -299,15 +247,6 @@ model Metric {
   cpuPercent         Float  @db.Real
 
   @@map("metrics")
-}
-
-model Minigame {
-  id                      Int    @id @default(autoincrement())
-  user_id                 String @unique @db.VarChar(19)
-  
-
-  new_user NewUser?
-  @@map("minigames")
 }
 
 model CommandUsage {

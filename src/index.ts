@@ -1,3 +1,4 @@
+import './lib/items/customItems';
 import './lib/data/itemAliases';
 import './lib/crons';
 

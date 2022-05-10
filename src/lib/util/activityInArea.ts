@@ -1,11 +1,6 @@
 import { Monsters } from 'oldschooljs';
 
-import {
-	ActivityTaskOptions,
-	AgilityActivityTaskOptions,
-	MonsterActivityTaskOptions,
-	PickpocketActivityTaskOptions
-} from '../types/minions';
+import { ActivityTaskOptions, MonsterActivityTaskOptions } from '../types/minions';
 
 export const enum WorldLocations {
 	Priffdinas,
@@ -22,18 +17,6 @@ const WorldLocationsChecker = [
 				[Monsters.DarkBeast.id, Monsters.PrifddinasElf.id].includes(
 					(activity as MonsterActivityTaskOptions).monsterID
 				)
-			) {
-				return true;
-			}
-			if (
-				activity.type === 'Pickpocket' &&
-				(activity as PickpocketActivityTaskOptions).monsterID === Monsters.PrifddinasElf.id
-			) {
-				return true;
-			}
-			if (
-				activity.type === 'Agility' &&
-				(activity as AgilityActivityTaskOptions).courseID === 'Prifddinas Rooftop Course'
 			) {
 				return true;
 			}

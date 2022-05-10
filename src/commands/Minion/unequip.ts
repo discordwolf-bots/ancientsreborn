@@ -17,7 +17,7 @@ export default class extends BotCommand {
 			usageDelim: ' ',
 			categoryFlags: ['minion'],
 			description: 'Unequips items from one of your gear setups.',
-			examples: ['+unequip range Twisted bow', '+unequip melee Abyssal whip']
+			examples: ['+unequip ranged Dianium Bow +1', '+unequip melee Dianium Plated Gloves']
 		});
 	}
 

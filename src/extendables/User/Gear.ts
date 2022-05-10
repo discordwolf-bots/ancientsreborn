@@ -14,24 +14,16 @@ export default class extends Extendable {
 	}
 
 	public rawGear(this: User): UserFullGearSetup {
-		const range = this.getGear('range');
+		const ranged = this.getGear('ranged');
 		const melee = this.getGear('melee');
-		const misc = this.getGear('misc');
-		const mage = this.getGear('mage');
+		const magic = this.getGear('magic');
 		const skilling = this.getGear('skilling');
-		const wildy = this.getGear('wildy');
-		const fashion = this.getGear('fashion');
-		const other = this.getGear('other');
 
 		return {
 			melee,
-			range,
-			misc,
+			ranged,
 			skilling,
-			mage,
-			wildy,
-			fashion,
-			other
+			magic
 		};
 	}
 

@@ -9,7 +9,7 @@ import { UserSettings } from '../../settings/types/UserSettings';
 import { Gear } from '../../structures/Gear';
 import { toTitleCase } from '../../util';
 import { canvasImageFromBuffer, drawItemQuantityText, drawTitleText, fillTextXTimesInCtx } from '../../util/canvasUtil';
-import { GearSetupType, GearSetupTypes, maxDefenceStats, maxOffenceStats } from '..';
+import { GearSetupType, GearSetupTypes, maxDefenceStats, maxOffenceStats, maxOtherStats } from '..';
 
 const gearTemplateFile = fs.readFileSync('./src/lib/resources/images/gear_template.png');
 const gearTemplateCompactFile = fs.readFileSync('./src/lib/resources/images/gear_template_compact.png');
@@ -20,31 +20,35 @@ const gearTemplateCompactFile = fs.readFileSync('./src/lib/resources/images/gear
 const slotCoordinates: { [key in EquipmentSlot]: [number, number] } = {
 	[EquipmentSlot.TwoHanded]: [15, 110],
 	[EquipmentSlot.Ammo]: [112, 71],
-	[EquipmentSlot.Body]: [70, 110],
+	[EquipmentSlot.Chest]: [70, 110],
 	[EquipmentSlot.Cape]: [30, 71],
-	[EquipmentSlot.Feet]: [70, 190],
-	[EquipmentSlot.Hands]: [16, 190],
-	[EquipmentSlot.Head]: [70, 31],
+	[EquipmentSlot.Boots]: [70, 190],
+	[EquipmentSlot.Gloves]: [16, 190],
+	[EquipmentSlot.Helm]: [70, 31],
 	[EquipmentSlot.Legs]: [70, 150],
 	[EquipmentSlot.Neck]: [70, 71],
 	[EquipmentSlot.Ring]: [127, 190],
 	[EquipmentSlot.Shield]: [127, 110],
-	[EquipmentSlot.Weapon]: [15, 108]
+	[EquipmentSlot.Weapon]: [15, 108],
+	[EquipmentSlot.Belt]: [88, 110],
+	[EquipmentSlot.Gems]: [90, 110]
 };
 
 const slotCoordinatesCompact: { [key in EquipmentSlot]: [number, number] } = {
-	[EquipmentSlot.Head]: [43, 1],
+	[EquipmentSlot.Helm]: [43, 1],
 	[EquipmentSlot.Cape]: [2, 40],
 	[EquipmentSlot.Neck]: [43, 40],
 	[EquipmentSlot.Ammo]: [84, 40],
 	[EquipmentSlot.TwoHanded]: [2, 79],
 	[EquipmentSlot.Weapon]: [2, 79],
-	[EquipmentSlot.Body]: [43, 79],
+	[EquipmentSlot.Chest]: [43, 79],
 	[EquipmentSlot.Shield]: [84, 79],
 	[EquipmentSlot.Legs]: [43, 119],
-	[EquipmentSlot.Hands]: [2, 159],
-	[EquipmentSlot.Feet]: [43, 159],
-	[EquipmentSlot.Ring]: [84, 159]
+	[EquipmentSlot.Gloves]: [2, 159],
+	[EquipmentSlot.Boots]: [43, 159],
+	[EquipmentSlot.Ring]: [84, 159],
+	[EquipmentSlot.Belt]: [88, 159],
+	[EquipmentSlot.Gems]: [90, 159]
 };
 
 const slotSize = 36;
@@ -134,34 +138,47 @@ export async function generateGearImage(
 	ctx.textAlign = 'start';
 	drawText(canvas, 'Attack bonus', 0, 25);
 	ctx.font = '16px OSRSFontCompact';
-	drawText(canvas, `Stab: ${gearStats.attack_stab}`, 0, 50, maxOffenceStats.attack_stab === gearStats.attack_stab);
 	drawText(
 		canvas,
-		`Slash: ${gearStats.attack_slash}`,
+		`Melee Attack: ${gearStats.meleeAttack}`,
+		0,
+		50,
+		maxOffenceStats.meleeAttack === gearStats.meleeAttack
+	);
+	drawText(
+		canvas,
+		`Melee Accuracy: ${gearStats.meleeAccuracy}`,
 		0,
 		68,
-		maxOffenceStats.attack_slash === gearStats.attack_slash
+		maxOffenceStats.meleeAccuracy === gearStats.meleeAccuracy
 	);
 	drawText(
 		canvas,
-		`Crush: ${gearStats.attack_crush}`,
+		`Ranged Attack: ${gearStats.rangedAttack}`,
 		0,
 		86,
-		maxOffenceStats.attack_crush === gearStats.attack_crush
+		maxOffenceStats.rangedAttack === gearStats.rangedAttack
 	);
 	drawText(
 		canvas,
-		`Ranged: ${gearStats.attack_ranged}`,
+		`Ranged Accuracy: ${gearStats.rangedAccuracy}`,
 		0,
 		104,
-		maxOffenceStats.attack_ranged === gearStats.attack_ranged
+		maxOffenceStats.rangedAccuracy === gearStats.rangedAccuracy
 	);
 	drawText(
 		canvas,
-		`Magic: ${gearStats.attack_magic}`,
+		`Magic Attack: ${gearStats.magicAttack}`,
 		0,
 		122,
-		maxOffenceStats.attack_magic === gearStats.attack_magic
+		maxOffenceStats.magicAttack === gearStats.magicAttack
+	);
+	drawText(
+		canvas,
+		`Magic Accuracy: ${gearStats.magicAccuracy}`,
+		0,
+		140,
+		maxOffenceStats.magicAccuracy === gearStats.magicAccuracy
 	);
 	ctx.restore();
 	ctx.save();
@@ -170,34 +187,89 @@ export async function generateGearImage(
 	ctx.textAlign = 'end';
 	drawText(canvas, 'Defence bonus', 0, 25);
 	ctx.font = '16px OSRSFontCompact';
-	drawText(canvas, `Stab: ${gearStats.defence_stab}`, 0, 50, maxDefenceStats.defence_stab === gearStats.defence_stab);
 	drawText(
 		canvas,
-		`Slash: ${gearStats.defence_slash}`,
+		`Melee Defence: ${gearStats.meleeDefence}`,
+		0,
+		50,
+		maxDefenceStats.meleeDefence === gearStats.meleeDefence
+	);
+	drawText(
+		canvas,
+		`Melee Block: ${gearStats.meleeBlock}`,
 		0,
 		68,
-		maxDefenceStats.defence_slash === gearStats.defence_slash
+		maxDefenceStats.meleeBlock === gearStats.meleeBlock
 	);
 	drawText(
 		canvas,
-		`Crush: ${gearStats.defence_crush}`,
+		`Ranged Defence: ${gearStats.rangedDefence}`,
 		0,
 		86,
-		maxDefenceStats.defence_crush === gearStats.defence_crush
+		maxDefenceStats.rangedDefence === gearStats.rangedDefence
 	);
 	drawText(
 		canvas,
-		`Ranged: ${gearStats.defence_ranged}`,
+		`Ranged Block: ${gearStats.rangedBlock}`,
 		0,
 		104,
-		maxDefenceStats.defence_ranged === gearStats.defence_ranged
+		maxDefenceStats.rangedBlock === gearStats.rangedBlock
 	);
 	drawText(
 		canvas,
-		`Magic: ${gearStats.defence_magic}`,
+		`Magic Defence: ${gearStats.magicDefence}`,
 		0,
 		122,
-		maxDefenceStats.defence_magic === gearStats.defence_magic
+		maxDefenceStats.magicDefence === gearStats.magicDefence
+	);
+	drawText(
+		canvas,
+		`Magic Block: ${gearStats.magicBlock}`,
+		0,
+		140,
+		maxDefenceStats.magicBlock === gearStats.magicBlock
+	);
+	ctx.restore();
+	ctx.save();
+	ctx.translate(canvas.width - 6 * 2, 0);
+	ctx.font = '16px RuneScape Bold 12';
+	ctx.textAlign = 'end';
+	drawText(canvas, 'Resistance bonus', 0, 25);
+	ctx.font = '16px OSRSFontCompact';
+	drawText(
+		canvas,
+		`Cold: ${gearStats.resistanceCold}`,
+		0,
+		50,
+		maxOtherStats.resistanceCold === gearStats.resistanceCold
+	);
+	drawText(
+		canvas,
+		`Heat: ${gearStats.resistanceHeat}`,
+		0,
+		68,
+		maxOtherStats.resistanceHeat === gearStats.resistanceHeat
+	);
+	drawText(
+		canvas,
+		`Physical: ${gearStats.resistancePhysical}`,
+		0,
+		86,
+		maxOtherStats.resistancePhysical === gearStats.resistancePhysical
+	);
+	drawText(
+		canvas,
+		`Poison: ${gearStats.resistancePoison}`,
+		0,
+		104,
+		maxOtherStats.resistancePoison === gearStats.resistancePoison
+	);
+	drawText(
+		canvas,
+		`Arcane: ${gearStats.resistanceArcane}`,
+		0,
+		122,
+		maxOtherStats.resistanceArcane === gearStats.resistanceArcane
 	);
 	ctx.textAlign = 'center';
 	ctx.restore();
@@ -207,16 +279,8 @@ export async function generateGearImage(
 	ctx.translate(225, 0);
 	ctx.font = '16px OSRSFontCompact';
 	ctx.textAlign = 'start';
-	drawText(canvas, `Melee Str.: ${gearStats.melee_strength}`, 0, 165, false);
-	drawText(canvas, `Ranged Str.: ${gearStats.ranged_strength}`, 0, 183, false);
+	drawText(canvas, `Health: ${gearStats.health}`, 0, 165, false);
 	// drawText(canvas, `Undead: ${(0).toFixed(1)} %`, 0, 201, false);
-	ctx.restore();
-	ctx.save();
-	ctx.translate(canvas.width - 6 * 2, 0);
-	ctx.font = '16px OSRSFontCompact';
-	ctx.textAlign = 'end';
-	drawText(canvas, `Magic Dmg.: ${gearStats.magic_damage.toFixed(1)}%`, 0, 165, false);
-	drawText(canvas, `Prayer: ${gearStats.prayer}`, 0, 183, false);
 	ctx.restore();
 
 	// Draw items

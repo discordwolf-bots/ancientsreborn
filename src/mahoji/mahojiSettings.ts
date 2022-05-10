@@ -182,14 +182,11 @@ export async function mahojiUserSettingsUpdate(
 
 	await klasaUser.settings.sync(true);
 	assert(BigInt(klasaUser.settings.get(UserSettings.GP)) === newUser.GP, 'Patched user should match');
-	assert(klasaUser.settings.get(UserSettings.LMSPoints) === newUser.lms_points, 'Patched user should match');
 	const klasaBank = klasaUser.settings.get(UserSettings.Bank);
 	const newBank = newUser.bank;
 	for (const [key, value] of Object.entries(klasaBank)) {
 		assert((newBank as any)[key] === value, `Item[${key}] in patched user should match`);
 	}
-	assert(klasaUser.settings.get(UserSettings.HonourLevel) === newUser.honour_level);
-	assert(klasaUser.settings.get(UserSettings.HonourPoints) === newUser.honour_points);
 
 	return { newUser };
 }
@@ -242,47 +239,43 @@ export interface MahojiUserOption {
 
 export function getSkillsOfMahojiUser(user: User): Skills {
 	return {
-		agility: Number(user.skills_agility),
-		cooking: Number(user.skills_cooking),
-		fishing: Number(user.skills_fishing),
 		mining: Number(user.skills_mining),
-		smithing: Number(user.skills_smithing),
+		fishing: Number(user.skills_fishing),
 		woodcutting: Number(user.skills_woodcutting),
-		firemaking: Number(user.skills_firemaking),
-		runecraft: Number(user.skills_runecraft),
-		crafting: Number(user.skills_crafting),
-		prayer: Number(user.skills_prayer),
+		gathering: Number(user.skills_gathering),
+
+		metallurgy: Number(user.skills_metallurgy),
+		blacksmithing: Number(user.skills_blacksmithing),
+		cooking: Number(user.skills_cooking),
+		carpentry: Number(user.skills_carpentry),
+		weaving: Number(user.skills_weaving),
 		fletching: Number(user.skills_fletching),
-		farming: Number(user.skills_farming),
-		herblore: Number(user.skills_herblore),
-		thieving: Number(user.skills_thieving),
-		hunter: Number(user.skills_hunter),
-		construction: Number(user.skills_construction),
-		magic: Number(user.skills_magic),
-		attack: Number(user.skills_attack),
+		tailoring: Number(user.skills_tailoring),
+
+		piercing: Number(user.skills_piercing),
+		fencing: Number(user.skills_fencing),
+		heavyWeapons: Number(user.skills_heavyWeapons),
+		magicStaffs: Number(user.skills_magicStaffs),
+		rangedWeapons: Number(user.skills_rangedWeapons),
+
 		strength: Number(user.skills_strength),
+		dexterity: Number(user.skills_dexterity),
 		defence: Number(user.skills_defence),
-		ranged: Number(user.skills_ranged),
-		hitpoints: Number(user.skills_hitpoints),
-		slayer: Number(user.skills_slayer)
+		intellect: Number(user.skills_intellect),
+		vitality: Number(user.skills_vitality)
 	};
 }
 
 export function getUserGear(user: User) {
 	return {
-		melee: new Gear((user.gear_melee as any) ?? { ...defaultGear }),
-		mage: new Gear((user.gear_mage as any) ?? { ...defaultGear }),
-		range: new Gear((user.gear_range as any) ?? { ...defaultGear }),
-		misc: new Gear((user.gear_misc as any) ?? { ...defaultGear }),
-		skilling: new Gear((user.gear_skilling as any) ?? { ...defaultGear }),
-		wildy: new Gear((user.gear_wildy as any) ?? { ...defaultGear }),
-		fashion: new Gear((user.gear_fashion as any) ?? { ...defaultGear }),
-		other: new Gear((user.gear_other as any) ?? { ...defaultGear })
+		active: new Gear((user.gear_active as any) ?? { ...defaultGear }),
+		secondary: new Gear((user.gear_secondary as any) ?? { ...defaultGear }),
+		skilling: new Gear((user.gear_skilling as any) ?? { ...defaultGear })
 	};
 }
 
 export function patronMsg(tierNeeded: number) {
 	return `You need to be a Tier ${
 		tierNeeded - 1
-	} Patron to use this command. You can become a patron to support the bot here: <https://www.patreon.com/oldschoolbot>`;
+	} Patron to use this command. You can become a patron to support the bot here: <Coming Soon>`;
 }

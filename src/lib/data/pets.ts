@@ -1,7 +1,7 @@
-import { Emoji } from '../constants';
+// import { Emoji } from '../constants';
 
-const xpEmoji = Emoji.XP;
-const gpEmoji = Emoji.GP;
+const xpEmoji = '';
+const gpEmoji = '';
 const fm = (num: number) => num.toLocaleString();
 
 interface Pet {

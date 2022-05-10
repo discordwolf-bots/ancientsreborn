@@ -4,12 +4,9 @@ import { table } from 'table';
 
 import { client } from '../..';
 import Createables from '../../lib/data/createables';
-import { gotFavour } from '../../lib/minions/data/kourendFavour';
 import { ClientSettings } from '../../lib/settings/types/ClientSettings';
 import { UserSettings } from '../../lib/settings/types/UserSettings';
 import { SkillsEnum } from '../../lib/skilling/types';
-import { SlayerTaskUnlocksEnum } from '../../lib/slayer/slayerUnlocks';
-import { hasSlayerUnlock } from '../../lib/slayer/slayerUtil';
 import { stringMatches, updateBankSetting } from '../../lib/util';
 import { OSBMahojiCommand } from '../lib/util';
 import { handleMahojiConfirmation } from '../mahojiSettings';
@@ -110,32 +107,6 @@ export const createCommand: OSBMahojiCommand = {
 			for (const [skillName, lvl] of Object.entries(createableItem.requiredSkills)) {
 				if (user.skillLevel(skillName as SkillsEnum) < lvl) {
 					return `You need ${lvl} ${skillName} to ${action} this item.`;
-				}
-			}
-		}
-		if (createableItem.requiredSlayerUnlocks) {
-			let mySlayerUnlocks = user.settings.get(UserSettings.Slayer.SlayerUnlocks);
-
-			const { success, errors } = hasSlayerUnlock(
-				mySlayerUnlocks as SlayerTaskUnlocksEnum[],
-				createableItem.requiredSlayerUnlocks
-			);
-			if (!success) {
-				return `You don't have the required Slayer Unlocks to ${action} this item.\n\nRequired: ${errors}`;
-			}
-		}
-		if (createableItem.requiredFavour) {
-			const [success, points] = gotFavour(user, createableItem.requiredFavour, 100);
-			if (!success) {
-				return `You don't have the required amount of Favour to ${action} this item.\n\nRequired: ${points}% ${createableItem.requiredFavour.toString()} Favour.`;
-			}
-		}
-
-		if (createableItem.name.toLowerCase().includes('kourend')) {
-			const currentUserFavour = user.settings.get(UserSettings.KourendFavour);
-			for (const [key, value] of Object.entries(currentUserFavour)) {
-				if (value < 100) {
-					return `You don't have the required amount of Favour to ${action} this item.\n\nRequired: 100% ${key} Favour.`;
 				}
 			}
 		}

@@ -20,11 +20,11 @@ export default function calculateMonsterFood(
 	let gearToCheck: GearSetupType = 'melee';
 
 	switch (attackStyleToUse) {
-		case GearStat.AttackMagic:
-			gearToCheck = 'mage';
+		case GearStat.MagicAttack:
+			gearToCheck = 'magic';
 			break;
-		case GearStat.AttackRanged:
-			gearToCheck = 'range';
+		case GearStat.RangedAttack:
+			gearToCheck = 'ranged';
 			break;
 		default:
 			break;

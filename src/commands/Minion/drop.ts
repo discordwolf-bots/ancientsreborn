@@ -1,6 +1,5 @@
 import { CommandStore, KlasaMessage } from 'klasa';
 
-import ClueTiers from '../../lib/minions/data/clueTiers';
 import { ClientSettings } from '../../lib/settings/types/ClientSettings';
 import { UserSettings } from '../../lib/settings/types/UserSettings';
 import { BotCommand } from '../../lib/structures/BotCommand';
@@ -42,7 +41,6 @@ export default class extends BotCommand {
 		const favs = msg.author.settings.get(UserSettings.FavoriteItems);
 		let itemsToDoubleCheck = [
 			...favs,
-			...ClueTiers.map(c => [c.id, c.scrollID]),
 			...msg.author
 				.bank()
 				.items()

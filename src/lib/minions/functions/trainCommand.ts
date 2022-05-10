@@ -5,17 +5,15 @@ import { SkillsEnum } from 'oldschooljs/dist/constants';
 import { toTitleCase } from '../../util';
 import { AttackStyles } from '.';
 
-const validStyles = [SkillsEnum.Attack, SkillsEnum.Strength, SkillsEnum.Defence, SkillsEnum.Ranged, SkillsEnum.Magic];
+const validStyles = [SkillsEnum.Strength, SkillsEnum.Dexterity, SkillsEnum.Defence, SkillsEnum.Intellect];
 
 function isValidAttackStyle(str: string): str is AttackStyles {
 	return (validStyles as string[]).includes(str);
 }
 
 const invalidCombinations: [AttackStyles, AttackStyles][] = [
-	[SkillsEnum.Attack, SkillsEnum.Magic],
-	[SkillsEnum.Strength, SkillsEnum.Magic],
-	[SkillsEnum.Attack, SkillsEnum.Ranged],
-	[SkillsEnum.Strength, SkillsEnum.Ranged]
+	[SkillsEnum.Dexterity, SkillsEnum.Intellect],
+	[SkillsEnum.Strength, SkillsEnum.Intellect]
 ];
 
 export async function trainCommand(msg: KlasaMessage, _styles: string | undefined) {
@@ -26,7 +24,9 @@ export async function trainCommand(msg: KlasaMessage, _styles: string | undefine
 		return msg.channel.send(
 			`Your current attack style is ${msg.author
 				.getAttackStyles()
-				.map(toTitleCase)}, the available styles are: Shared, Attack, Strength, Defence, Magic, Ranged.`
+				.map(
+					toTitleCase
+				)}, the available styles are: Strength, Dexterity, Defence, Intellect, Shared, StrengthDexterity, StrengthDefence, DexterityDefence, IntellectDefence.`
 		);
 	}
 	const parsed = _styles
@@ -36,15 +36,45 @@ export async function trainCommand(msg: KlasaMessage, _styles: string | undefine
 
 	if (uniqueArr(parsed).length !== parsed.length || (_styles !== 'shared' && !parsed.every(isValidAttackStyle))) {
 		return msg.channel.send(
-			'That is not a valid attack style, the available styles are: Shared, Attack, Strength, Defence, Magic, Ranged.'
+			'That is not a valid attack style, the available styles are: Strength, Dexterity, Defence, Intellect, Shared, StrengthDexterity, StrengthDefence, DexterityDefence, IntellectDefence'
 		);
 	}
-	const styles: AttackStyles[] =
-		_styles === 'shared'
-			? [SkillsEnum.Attack, SkillsEnum.Strength, SkillsEnum.Defence]
-			: isValidAttackStyle(_styles)
-			? [_styles]
-			: parsed.filter(isValidAttackStyle);
+
+	let styles: AttackStyles[] = [];
+	switch (_styles) {
+		case 'shared':
+			styles = [SkillsEnum.Strength, SkillsEnum.Dexterity, SkillsEnum.Defence];
+			break;
+		case 'strdex':
+		case 'dexstr':
+		case 'strengthdexterity':
+		case 'dexteritystrength':
+			styles = [SkillsEnum.Strength, SkillsEnum.Dexterity];
+			break;
+		case 'strdef':
+		case 'defstr':
+		case 'defencestrength':
+		case 'strengthdefence':
+			styles = [SkillsEnum.Strength, SkillsEnum.Defence];
+			break;
+		case 'dexdef':
+		case 'defdex':
+		case 'defencedexterity':
+		case 'dexteritydefence':
+			styles = [SkillsEnum.Defence, SkillsEnum.Dexterity];
+			break;
+		case 'intdef':
+		case 'defint':
+		case 'intellectdefence':
+		case 'defenceintellect':
+			styles = [SkillsEnum.Intellect, SkillsEnum.Defence];
+			break;
+		default: {
+			if (isValidAttackStyle(_styles)) styles = [_styles];
+			else styles = parsed.filter(isValidAttackStyle);
+			break;
+		}
+	}
 
 	for (const comb of invalidCombinations) {
 		if (comb.every(i => styles.includes(i))) {

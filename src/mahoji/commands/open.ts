@@ -99,17 +99,6 @@ export const openCommand: OSBMahojiCommand = {
 
 		const nthOpenable = formatOrdinal(previousScore + randInt(1, quantity));
 
-		if (loot.bank.has("Lil' creator")) {
-			client.emit(
-				Events.ServerNotification,
-				`<:lil_creator:798221383951319111> **${user.username}'s** minion, ${
-					user.minionName
-				}, just received a Lil' creator! They've done ${await user.getMinigameScore(
-					'soul_wars'
-				)} Soul wars games, and this is their ${nthOpenable} Spoils of war crate.`
-			);
-		}
-
 		if (openedItem.id === itemID('Bag full of gems') && loot.bank.has('Uncut onyx')) {
 			client.emit(
 				Events.ServerNotification,

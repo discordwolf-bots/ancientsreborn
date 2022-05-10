@@ -1,8 +1,7 @@
 import { NewUser } from '@prisma/client';
 import { Util } from 'discord.js';
 import { roll } from 'e';
-import { Gateway, KlasaMessage, KlasaUser, Settings } from 'klasa';
-import { Bank } from 'oldschooljs';
+import { Gateway, KlasaMessage, Settings } from 'klasa';
 
 import { client, mahojiClient } from '../..';
 import { CommandArgs } from '../../mahoji/lib/inhibitors';
@@ -20,8 +19,6 @@ import { ActivityTaskData } from '../types/minions';
 import { channelIsSendable, cleanUsername, isGroupActivity } from '../util';
 import { logError } from '../util/logError';
 import { activitySync, prisma } from './prisma';
-
-export * from './minigames';
 
 export async function getUserSettings(userID: string): Promise<Settings> {
 	return (client.gateways.get('users') as Gateway)!
@@ -248,33 +245,33 @@ export async function runCommand({
 	return null;
 }
 
-export async function getBuyLimitBank(user: KlasaUser) {
-	const boughtBank = await prisma.user.findFirst({
-		where: {
-			id: user.id
-		},
-		select: {
-			weekly_buy_bank: true
-		}
-	});
-	if (!boughtBank) {
-		throw new Error(`Found no weekly_buy_bank for ${user.sanitizedName}`);
-	}
-	return new Bank(boughtBank.weekly_buy_bank as any);
-}
+// export async function getBuyLimitBank(user: KlasaUser) {
+// 	const boughtBank = await prisma.user.findFirst({
+// 		where: {
+// 			id: user.id
+// 		},
+// 		select: {
+// 			weekly_buy_bank: true
+// 		}
+// 	});
+// 	if (!boughtBank) {
+// 		throw new Error(`Found no weekly_buy_bank for ${user.sanitizedName}`);
+// 	}
+// 	return new Bank(boughtBank.weekly_buy_bank as any);
+// }
 
-export async function addToBuyLimitBank(user: KlasaUser, newBank: Bank) {
-	const current = await getBuyLimitBank(user);
-	const result = await prisma.user.update({
-		where: {
-			id: user.id
-		},
-		data: {
-			weekly_buy_bank: current.add(newBank).bank
-		}
-	});
-	if (!result) {
-		throw new Error('Error storing updated weekly_buy_bank');
-	}
-	return true;
-}
+// export async function addToBuyLimitBank(user: KlasaUser, newBank: Bank) {
+// 	const current = await getBuyLimitBank(user);
+// 	const result = await prisma.user.update({
+// 		where: {
+// 			id: user.id
+// 		},
+// 		data: {
+// 			weekly_buy_bank: current.add(newBank).bank
+// 		}
+// 	});
+// 	if (!result) {
+// 		throw new Error('Error storing updated weekly_buy_bank');
+// 	}
+// 	return true;
+// }

@@ -1,29 +1,20 @@
 import { activity_type_enum } from '@prisma/client';
-import { Message, MessageAttachment, MessageCollector, TextChannel } from 'discord.js';
+import { Message, MessageAttachment, MessageCollector } from 'discord.js';
 import { Time } from 'e';
 import { KlasaClient, KlasaMessage, KlasaUser } from 'klasa';
 import { Bank } from 'oldschooljs';
 
-import { BitField, COINS_ID, Emoji, lastTripCache, PerkTier } from '../constants';
-import { handleGrowablePetGrowth } from '../growablePets';
-import { handlePassiveImplings } from '../implings';
-import clueTiers from '../minions/data/clueTiers';
-import { triggerRandomEvent } from '../randomEvents';
+import { CREDITS_ID, lastTripCache, PerkTier } from '../constants';
 import { runCommand } from '../settings/settings';
 import { ClientSettings } from '../settings/types/ClientSettings';
 import { ActivityTaskOptions } from '../types/minions';
-import { channelIsSendable, generateContinuationChar, roll, stringMatches, updateGPTrackSetting } from '../util';
+import { channelIsSendable, generateContinuationChar, stringMatches, updateGPTrackSetting } from '../util';
 import getUsersPerkTier from './getUsersPerkTier';
 import { sendToChannelID } from './webhook';
 
 export const collectors = new Map<string, MessageCollector>();
 
-const activitiesToTrackAsPVMGPSource: activity_type_enum[] = [
-	'GroupMonsterKilling',
-	'MonsterKilling',
-	'Raids',
-	'ClueCompletion'
-];
+const activitiesToTrackAsPVMGPSource: activity_type_enum[] = ['GroupMonsterKilling', 'MonsterKilling'];
 
 export async function handleTripFinish(
 	client: KlasaClient,
@@ -45,39 +36,9 @@ export async function handleTripFinish(
 	}
 
 	if (loot && activitiesToTrackAsPVMGPSource.includes(data.type)) {
-		const GP = loot.amount(COINS_ID);
+		const GP = loot.amount(CREDITS_ID);
 		if (typeof GP === 'number') {
 			updateGPTrackSetting(client, ClientSettings.EconomyStats.GPSourcePVMLoot, GP);
-		}
-	}
-
-	const clueReceived = loot ? clueTiers.find(tier => loot.amount(tier.scrollID) > 0) : undefined;
-
-	if (clueReceived) {
-		message += `\n${Emoji.Casket} **You got a ${clueReceived.name} clue scroll** in your loot.`;
-		if (perkTier > PerkTier.One) {
-			message += ` Say \`c\` if you want to complete this ${clueReceived.name} clue now.`;
-		} else {
-			message += 'You can get your minion to complete them using `+minion clue easy/medium/etc`';
-		}
-	}
-
-	if (loot?.has('Unsired')) {
-		message += '\n**You received an unsired!** You can offer it for loot using `+offer unsired`.';
-	}
-
-	const imp = handlePassiveImplings(user, data);
-	if (imp) {
-		if (imp.bank.length > 0) {
-			const many = imp.bank.length > 1;
-			message += `\n\nYour minion caught ${many ? 'some' : 'an'} impling${many ? 's' : ''}, you received: ${
-				imp.bank
-			}.`;
-			await user.addItemsToBank({ items: imp.bank, collectionLog: true });
-		}
-
-		if (imp.missed.length > 0) {
-			message += `\n\nYou missed out on these implings, because your hunter level is too low: ${imp.missed}.`;
 		}
 	}
 
@@ -89,22 +50,9 @@ export async function handleTripFinish(
 
 	const channel = client.channels.cache.get(channelID);
 
-	message = await handleGrowablePetGrowth(user, data, message);
+	sendToChannelID(client, channelID, { content: message, image: attachable });
 
-	sendToChannelID(client, channelID, { content: message, image: attachable }).then(() => {
-		const minutes = Math.min(30, data.duration / Time.Minute);
-		const randomEventChance = 60 - minutes;
-		if (
-			channel &&
-			!user.bitfield.includes(BitField.DisabledRandomEvents) &&
-			roll(randomEventChance) &&
-			channel instanceof TextChannel
-		) {
-			triggerRandomEvent(channel, user);
-		}
-	});
-
-	if (!onContinue && !clueReceived) return;
+	if (!onContinue) return;
 
 	const existingCollector = collectors.get(user.id);
 
@@ -147,15 +95,7 @@ export async function handleTripFinish(
 			return;
 		}
 		try {
-			if (mes.content.toLowerCase() === 'c' && clueReceived && perkTier > PerkTier.One) {
-				runCommand({
-					message: mes,
-					commandName: 'mclue',
-					args: [1, clueReceived.name],
-					bypassInhibitors: true
-				});
-				return;
-			} else if (onContinueFn && stringMatches(mes.content, continuationChar)) {
+			if (onContinueFn && stringMatches(mes.content, continuationChar)) {
 				await onContinueFn(mes).catch(err => {
 					channel.send(err.message ?? err);
 				});

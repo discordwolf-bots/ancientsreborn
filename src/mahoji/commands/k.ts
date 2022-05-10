@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, CommandRunOptions } from 'mahoji';
 
 import { client } from '../..';
-import { PVM_METHODS, PvMMethod } from '../../lib/constants';
+import { PvMMethod } from '../../lib/constants';
 import { effectiveMonsters } from '../../lib/minions/data/killableMonsters';
 import { minionKillCommand } from '../lib/abstracted_commands/minionKill';
 import { OSBMahojiCommand } from '../lib/util';
@@ -37,22 +37,14 @@ export const killCommand: OSBMahojiCommand = {
 			description: 'The amount you want to kill.',
 			required: false,
 			min_value: 0
-		},
-		{
-			type: ApplicationCommandOptionType.String,
-			name: 'method',
-			description: 'If you want to cannon/barrage/burst.',
-			required: false,
-			choices: PVM_METHODS.map(i => ({ name: i, value: i }))
 		}
 	],
 	run: async ({
 		options,
 		userID,
-		channelID,
-		interaction
+		channelID
 	}: CommandRunOptions<{ name: string; quantity?: number; method?: PvMMethod }>) => {
 		const user = await client.fetchUser(userID);
-		return minionKillCommand(interaction, user, channelID, options.name, options.quantity, options.method);
+		return minionKillCommand(user, channelID, options.name, options.quantity);
 	}
 };

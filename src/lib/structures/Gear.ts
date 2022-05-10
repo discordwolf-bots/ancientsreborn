@@ -8,35 +8,41 @@ import getOSItem from '../util/getOSItem';
 import resolveItems from '../util/resolveItems';
 
 const baseStats: GearStats = {
-	attack_stab: 0,
-	attack_slash: 0,
-	attack_crush: 0,
-	attack_magic: 0,
-	attack_ranged: 0,
-	defence_stab: 0,
-	defence_slash: 0,
-	defence_crush: 0,
-	defence_magic: 0,
-	defence_ranged: 0,
-	melee_strength: 0,
-	ranged_strength: 0,
-	magic_damage: 0,
-	prayer: 0
+	meleeAttack: 0,
+	meleeAccuracy: 0,
+	meleeBlock: 0,
+	meleeDefence: 0,
+	rangedAttack: 0,
+	rangedAccuracy: 0,
+	rangedBlock: 0,
+	rangedDefence: 0,
+	magicAccuracy: 0,
+	magicAttack: 0,
+	magicBlock: 0,
+	magicDefence: 0,
+	health: 0,
+	resistanceArcane: 0,
+	resistanceCold: 0,
+	resistanceHeat: 0,
+	resistancePhysical: 0,
+	resistancePoison: 0
 };
 
 export class Gear {
 	[EquipmentSlot.TwoHanded]: GearSlotItem | null = null;
 	[EquipmentSlot.Ammo]: GearSlotItem | null = null;
-	[EquipmentSlot.Body]: GearSlotItem | null = null;
+	[EquipmentSlot.Chest]: GearSlotItem | null = null;
 	[EquipmentSlot.Cape]: GearSlotItem | null = null;
-	[EquipmentSlot.Feet]: GearSlotItem | null = null;
-	[EquipmentSlot.Hands]: GearSlotItem | null = null;
-	[EquipmentSlot.Head]: GearSlotItem | null = null;
+	[EquipmentSlot.Boots]: GearSlotItem | null = null;
+	[EquipmentSlot.Gloves]: GearSlotItem | null = null;
+	[EquipmentSlot.Helm]: GearSlotItem | null = null;
 	[EquipmentSlot.Legs]: GearSlotItem | null = null;
 	[EquipmentSlot.Neck]: GearSlotItem | null = null;
 	[EquipmentSlot.Ring]: GearSlotItem | null = null;
 	[EquipmentSlot.Shield]: GearSlotItem | null = null;
 	[EquipmentSlot.Weapon]: GearSlotItem | null = null;
+	[EquipmentSlot.Belt]: GearSlotItem | null = null;
+	[EquipmentSlot.Gems]: GearSlotItem | null = null;
 	stats = baseStats;
 
 	constructor(_setup: GearSetup | PartialGearSetup = {}) {
@@ -47,16 +53,18 @@ export class Gear {
 
 		this['2h'] = setup['2h'];
 		this.ammo = setup.ammo;
-		this.body = setup.body;
+		this.chest = setup.chest;
 		this.cape = setup.cape;
-		this.feet = setup.feet;
-		this.hands = setup.hands;
-		this.head = setup.head;
+		this.boots = setup.boots;
+		this.gloves = setup.gloves;
+		this.helm = setup.helm;
 		this.legs = setup.legs;
 		this.neck = setup.neck;
 		this.ring = setup.ring;
 		this.shield = setup.shield;
 		this.weapon = setup.weapon;
+		this.belt = setup.belt;
+		this.gems = setup.gems;
 
 		this.stats = this.getStats();
 	}
@@ -64,16 +72,18 @@ export class Gear {
 	raw(): GearSetup {
 		return {
 			ammo: this.ammo,
-			body: this.body,
+			chest: this.chest,
 			cape: this.cape,
-			feet: this.feet,
-			hands: this.hands,
-			head: this.head,
+			boots: this.boots,
+			gloves: this.gloves,
+			helm: this.helm,
 			legs: this.legs,
 			neck: this.neck,
 			ring: this.ring,
 			shield: this.shield,
 			weapon: this.weapon,
+			belt: this.belt,
+			gems: this.gems,
 			'2h': this['2h']
 		};
 	}

@@ -1,7 +1,6 @@
 import { User } from 'discord.js';
 import { objectEntries } from 'e';
 import { Extendable, ExtendableStore, KlasaClient, KlasaUser, SettingsFolder } from 'klasa';
-import { Item } from 'oldschooljs/dist/meta/types';
 import PromiseQueue from 'p-queue';
 
 import { Events, PerkTier, userQueues } from '../../lib/constants';
@@ -11,7 +10,6 @@ import { prisma } from '../../lib/settings/prisma';
 import { UserSettings } from '../../lib/settings/types/UserSettings';
 import { Skills } from '../../lib/types';
 import { formatItemReqs, itemNameFromID } from '../../lib/util';
-import getOSItem from '../../lib/util/getOSItem';
 import getUsersPerkTier from '../../lib/util/getUsersPerkTier';
 
 export default class extends Extendable {
@@ -93,7 +91,7 @@ export default class extends Extendable {
 
 	// @ts-ignore 2784
 	public get badges(this: User) {
-		const username = this.settings.get(UserSettings.RSN);
+		const username = this.settings.get(UserSettings.Account);
 		if (!username) return '';
 		return (this.client as KlasaClient)._badgeCache.get(username.toLowerCase()) || '';
 	}
@@ -124,14 +122,5 @@ export default class extends Extendable {
 		if (poh !== null) return poh;
 		const createdPoh = await prisma.playerOwnedHouse.create({ data: { user_id: this.id } });
 		return createdPoh;
-	}
-
-	public getUserFavAlchs(this: User): Item[] {
-		return this.settings
-			.get(UserSettings.FavoriteAlchables)
-			.filter(id => this.bank().has(id))
-			.map(getOSItem)
-			.filter(i => i.highalch > 0 && i.tradeable)
-			.sort((a, b) => b.highalch - a.highalch);
 	}
 }

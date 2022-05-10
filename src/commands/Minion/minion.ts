@@ -12,16 +12,12 @@ import {
 	informationalButtons,
 	lastTripCache,
 	MAX_LEVEL,
-	MIMIC_MONSTER_ID,
 	PerkTier
 } from '../../lib/constants';
 import { GearSetupType } from '../../lib/gear';
-import ClueTiers from '../../lib/minions/data/clueTiers';
 import { effectiveMonsters } from '../../lib/minions/data/killableMonsters';
 import minionIcons from '../../lib/minions/data/minionIcons';
 import { minionNotBusy, requiresMinion } from '../../lib/minions/decorators';
-import { autoFarm } from '../../lib/minions/functions/autoFarm';
-import { blowpipeCommand } from '../../lib/minions/functions/blowpipeCommand';
 import { cancelTaskCommand } from '../../lib/minions/functions/cancelTaskCommand';
 import { dataCommand } from '../../lib/minions/functions/dataCommand';
 import { degradeableItemsCommand } from '../../lib/minions/functions/degradeableItemsCommand';
@@ -35,7 +31,6 @@ import { prisma } from '../../lib/settings/prisma';
 import { runCommand } from '../../lib/settings/settings';
 import { UserSettings } from '../../lib/settings/types/UserSettings';
 import Skills from '../../lib/skilling/skills';
-import Agility from '../../lib/skilling/skills/agility';
 import { BotCommand } from '../../lib/structures/BotCommand';
 import { convertLVLtoXP, isValidNickname, stringMatches } from '../../lib/util';
 
@@ -101,20 +96,6 @@ export default class MinionCommand extends BotCommand {
 	@requiresMinion
 	async run(msg: KlasaMessage) {
 		let components = [];
-		const bank = msg.author.bank();
-		if (!msg.author.minionIsBusy) {
-			for (const tier of ClueTiers) {
-				if (bank.has(tier.scrollID)) {
-					components.push(
-						new MessageButton()
-							.setLabel(`Do ${tier.name} Clue`)
-							.setStyle('SECONDARY')
-							.setCustomID(tier.name)
-							.setEmoji('365003979840552960')
-					);
-				}
-			}
-		}
 
 		const lastTrip = lastTripCache.get(msg.author.id);
 		if (lastTrip && !msg.author.minionIsBusy) {
@@ -219,14 +200,6 @@ export default class MinionCommand extends BotCommand {
 		return degradeableItemsCommand(msg, input);
 	}
 
-	async bp(msg: KlasaMessage, [input = '']: [string | undefined]) {
-		return this.blowpipe(msg, [input]);
-	}
-
-	async blowpipe(msg: KlasaMessage, [input = '']: [string | undefined]) {
-		return blowpipeCommand(msg, input);
-	}
-
 	async info(msg: KlasaMessage) {
 		return runCommand({ message: msg, commandName: 'rp', args: ['c', msg.author], bypassInhibitors: true });
 	}
@@ -249,14 +222,6 @@ export default class MinionCommand extends BotCommand {
 
 	async ep(msg: KlasaMessage, [input = '']: [string | undefined]) {
 		return equipPet(msg, input);
-	}
-
-	async af(msg: KlasaMessage) {
-		return autoFarm(msg);
-	}
-
-	async autofarm(msg: KlasaMessage) {
-		return autoFarm(msg);
 	}
 
 	async activities(msg: KlasaMessage) {
@@ -412,7 +377,7 @@ Type \`confirm\` if you understand the above information, and want to become an 
 			);
 
 			const allSchemaKeys = Array.from(this.client.gateways.get('users')!.schema.keys());
-			const keysToReset = allSchemaKeys.filter(k => !['pets', 'RSN', 'patreon_id', 'github_id'].includes(k));
+			const keysToReset = allSchemaKeys.filter(k => !['pets', 'Account', 'patreon_id', 'github_id'].includes(k));
 			await msg.author.settings.reset([...keysToReset]);
 
 			try {
@@ -461,9 +426,6 @@ Type \`confirm\` if you understand the above information, and want to become an 
 				'\u200b',
 				monsterScoreChunk
 					.map(([monID, monKC]) => {
-						if (parseInt(monID) === MIMIC_MONSTER_ID) {
-							return `${Emoji.Casket} **Mimic:** ${monKC}`;
-						}
 						const mon = effectiveMonsters.find(m => m.id === parseInt(monID));
 						if (!mon) return `**${Monsters.get(parseInt(monID))?.name}:** ${monKC}`;
 						return `${(mon as any)?.emoji ?? ''}**${mon!.name}**: ${monKC}`;
@@ -481,19 +443,6 @@ Type \`confirm\` if you understand the above information, and want to become an 
 		return msg.channel.send(
 			`${msg.author.minionName}'s Quest Point count is: ${msg.author.settings.get(UserSettings.QP)}.`
 		);
-	}
-
-	@requiresMinion
-	async clues(msg: KlasaMessage) {
-		const clueScores = msg.author.settings.get(UserSettings.ClueScores);
-		if (Object.keys(clueScores).length === 0) return msg.channel.send("You haven't done any clues yet.");
-
-		let res = `${Emoji.Casket} **${msg.author.minionName}'s Clue Scores:**\n\n`;
-		for (const [clueID, clueScore] of Object.entries(clueScores)) {
-			const clue = ClueTiers.find(c => c.id === parseInt(clueID));
-			res += `**${clue!.name}**: ${clueScore}\n`;
-		}
-		return msg.channel.send(res);
 	}
 
 	async buy(msg: KlasaMessage) {

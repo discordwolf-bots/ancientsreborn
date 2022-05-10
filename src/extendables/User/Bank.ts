@@ -4,10 +4,8 @@ import { Extendable, ExtendableStore } from 'klasa';
 import { Bank } from 'oldschooljs';
 import { Item } from 'oldschooljs/dist/meta/types';
 
-import { projectiles } from '../../lib/constants';
-import { blowpipeDarts, validateBlowpipeData } from '../../lib/minions/functions/blowpipeCommand';
+import { CREDITS_ID, projectiles } from '../../lib/constants';
 import { UserSettings } from '../../lib/settings/types/UserSettings';
-import { filterLootReplace } from '../../lib/slayer/slayerUtil';
 import { ItemBank } from '../../lib/types';
 import {
 	bankHasAllItemsFromBank,
@@ -73,24 +71,20 @@ export default class extends Extendable {
 		{
 			items,
 			collectionLog = false,
-			filterLoot = true,
 			dontAddToTempCL = false
 		}: { items: ItemBank | Bank; collectionLog?: boolean; filterLoot?: boolean; dontAddToTempCL?: boolean }
 	): Promise<{ previousCL: Bank; itemsAdded: Bank }> {
 		return this.queueFn(async user => {
 			await this.settings.sync(true);
 			let loot = deduplicateClueScrolls({
-				loot: items instanceof Bank ? items.clone() : new Bank(items),
-				currentBank: user.bank()
+				loot: items instanceof Bank ? items.clone() : new Bank(items)
 			});
 
 			sanitizeBank(loot);
 
 			const previousCL = user.cl();
 
-			const { bankLoot, clLoot } = filterLoot
-				? filterLootReplace(user.allItemsOwned(), loot)
-				: { bankLoot: loot, clLoot: loot };
+			const { bankLoot, clLoot } = { bankLoot: loot, clLoot: loot };
 			loot = bankLoot;
 			if (collectionLog) {
 				await user.addItemsToCollectionLog({ items: clLoot, dontAddToTempCL });
@@ -125,7 +119,7 @@ export default class extends Extendable {
 
 			const currentBank = user.settings.get(UserSettings.Bank);
 			const GP = user.settings.get(UserSettings.GP);
-			if (!bankHasAllItemsFromBank({ ...currentBank, 995: GP }, itemBank)) {
+			if (!bankHasAllItemsFromBank({ ...currentBank, CREDITS_ID: GP }, itemBank)) {
 				throw new Error(
 					`Tried to remove ${new Bank(itemBank)} from ${
 						user.username
@@ -137,9 +131,9 @@ export default class extends Extendable {
 				...itemBank
 			};
 
-			if (items[995]) {
-				await user.removeGP(items[995]);
-				delete items[995];
+			if (items[CREDITS_ID]) {
+				await user.removeGP(items[CREDITS_ID]);
+				delete items[CREDITS_ID];
 			}
 			if (Object.keys(items).length === 0) return;
 
@@ -151,19 +145,13 @@ export default class extends Extendable {
 	public async specialRemoveItems(this: User, _bank: Bank) {
 		const bank = determineRunes(this, _bank);
 		const bankRemove = new Bank();
-		let dart: [Item, number] | null = null;
 		let ammoRemove: [Item, number] | null = null;
 
 		const realCost = bank.clone();
-		const rangeGear = this.getGear('range');
+		const rangeGear = this.getGear('ranged');
 		const hasAvas = rangeGear.hasEquipped("Ava's assembler");
 
 		for (const [item, quantity] of bank.items()) {
-			if (blowpipeDarts.includes(item)) {
-				if (dart !== null) throw new Error('Tried to remove more than 1 blowpipe dart.');
-				dart = [item, quantity];
-				continue;
-			}
 			if (Object.values(projectiles).flat(2).includes(item.id)) {
 				if (ammoRemove !== null) throw new Error('Tried to remove more than 1 ranged ammunition.');
 				ammoRemove = [item, quantity];
@@ -206,45 +194,6 @@ export default class extends Extendable {
 			});
 		}
 
-		if (dart) {
-			if (hasAvas) {
-				let copyDarts = dart![1];
-				for (let i = 0; i < copyDarts; i++) {
-					if (percentChance(80)) {
-						realCost.remove(dart[0].id, 1);
-						dart![1]--;
-					}
-				}
-			}
-			const scales = Math.ceil((10 / 3) * dart[1]);
-			const rawBlowpipeData = this.settings.get(UserSettings.Blowpipe);
-			if (!this.owns('Toxic blowpipe') || !rawBlowpipeData) {
-				throw new Error("You don't have a Toxic blowpipe.");
-			}
-			if (!rawBlowpipeData.dartID || !rawBlowpipeData.dartQuantity) {
-				throw new Error('You have no darts in your Toxic blowpipe.');
-			}
-			if (rawBlowpipeData.dartQuantity < dart[1]) {
-				throw new Error(
-					`You don't have enough ${itemNameFromID(
-						rawBlowpipeData.dartID
-					)}s in your Toxic blowpipe, you need ${dart[1]}, but you have only ${rawBlowpipeData.dartQuantity}.`
-				);
-			}
-			if (!rawBlowpipeData.scales || rawBlowpipeData.scales < scales) {
-				throw new Error(
-					`You don't have enough Zulrah's scales in your Toxic blowpipe, you need ${scales} but you have only ${rawBlowpipeData.scales}.`
-				);
-			}
-			removeFns.push(() => {
-				const bpData = { ...this.settings.get(UserSettings.Blowpipe) };
-				bpData.dartQuantity -= dart![1];
-				bpData.scales -= scales;
-				validateBlowpipeData(bpData);
-				return this.settings.update(UserSettings.Blowpipe, bpData);
-			});
-		}
-
 		if (bankRemove.length > 0) {
 			if (!this.owns(bankRemove)) {
 				throw new Error(`You don't own: ${bankRemove.clone().remove(this.bank())}.`);
@@ -281,7 +230,7 @@ export default class extends Extendable {
 		}
 		const itemBank = bank instanceof Bank ? { ...bank.bank } : bank;
 		return bankHasAllItemsFromBank(
-			{ ...this.settings.get(UserSettings.Bank), 995: this.settings.get(UserSettings.GP) },
+			{ ...this.settings.get(UserSettings.Bank), CREDITS_ID: this.settings.get(UserSettings.GP) },
 			itemBank
 		);
 	}

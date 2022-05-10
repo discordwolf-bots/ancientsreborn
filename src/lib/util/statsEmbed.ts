@@ -1,6 +1,6 @@
 import { MessageEmbed } from 'discord.js';
 import { Player } from 'oldschooljs';
-import { CluesScore, SkillScore, SkillsScore } from 'oldschooljs/dist/meta/types';
+import { SkillScore, SkillsScore } from 'oldschooljs/dist/meta/types';
 
 import { client } from '../..';
 import { skillEmoji } from '../constants';
@@ -52,34 +52,14 @@ export function statsEmbed({
 		);
 
 	if (showExtra) {
-		embed
-			.addField(
-				`${skillEmoji.total} Overall`,
-				`**Rank:** ${player.skills.overall.rank.toLocaleString()}
+		embed.addField(
+			`${skillEmoji.total} Overall`,
+			`**Rank:** ${player.skills.overall.rank.toLocaleString()}
 **Level:** ${player.skills.overall.level}
 **XP:** ${player.skills.overall.xp.toLocaleString()}
 **Combat Level:** ${player.combatLevel}`,
-				true
-			)
-			.addField(
-				'<:minigame_icon:630400565070921761> Minigame Scores',
-				`**BH:** ${player.minigames.bountyHunter.score.toLocaleString()}
-**BH-Rogue:** ${player.minigames.bountyHunterRogue.score.toLocaleString()}
-**LMS:** ${player.minigames.LMS.score.toLocaleString()}
-`,
-				true
-			)
-			.addField(
-				'<:Clue_scroll:365003979840552960> Clue Scores',
-				Object.keys(player.clues)
-					.slice(1)
-					.map(
-						tier =>
-							`**${toTitleCase(tier)}:** ${player.clues[tier as keyof CluesScore].score.toLocaleString()}`
-					)
-					.join('\n'),
-				true
-			);
+			true
+		);
 	}
 	return embed;
 }

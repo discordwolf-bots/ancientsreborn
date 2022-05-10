@@ -1,6 +1,5 @@
 import { KlasaUser } from 'klasa';
 
-import { calcPOHBoosts } from '../../poh';
 import { prisma } from '../../settings/prisma';
 import { UserSettings } from '../../settings/types/UserSettings';
 import { KillableMonster } from '../types';
@@ -21,7 +20,7 @@ export default async function reducedTimeForGroup(
 				messages.push(`${users[i].username} has no pool`);
 				continue;
 			}
-			const [boosts] = calcPOHBoosts(poh, monster.pohBoosts!);
+			const [boosts] = [0];
 			reductionMultiplier += boosts / 100;
 		}
 	}

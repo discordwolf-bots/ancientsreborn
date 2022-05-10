@@ -5,7 +5,7 @@ import { minionNotBusy, requiresMinion } from '../../lib/minions/decorators';
 import Mining from '../../lib/skilling/skills/mining';
 import { SkillsEnum } from '../../lib/skilling/types';
 import { BotCommand } from '../../lib/structures/BotCommand';
-import { MiningActivityTaskOptions } from '../../lib/types/minions';
+import { ProductionActivityTaskOptions } from '../../lib/types/minions';
 import { determineScaledOreTime, formatDuration, itemNameFromID, stringMatches } from '../../lib/util';
 import addSubTaskToActivityTask from '../../lib/util/addSubTaskToActivityTask';
 import itemID from '../../lib/util/itemID';
@@ -73,7 +73,7 @@ export default class extends BotCommand {
 		}
 
 		// Calculate the time it takes to mine a single ore of this type, at this persons level.
-		let timeToMine = determineScaledOreTime(ore!.xp, ore.respawnTime, msg.author.skillLevel(SkillsEnum.Mining));
+		let timeToMine = determineScaledOreTime(ore!.xp, 5, msg.author.skillLevel(SkillsEnum.Mining));
 
 		// For each pickaxe, if they have it, give them its' bonus and break.
 		const boosts = [];
@@ -120,8 +120,8 @@ export default class extends BotCommand {
 			);
 		}
 
-		await addSubTaskToActivityTask<MiningActivityTaskOptions>({
-			oreID: ore.id,
+		await addSubTaskToActivityTask<ProductionActivityTaskOptions>({
+			produceID: ore.id,
 			userID: msg.author.id,
 			channelID: msg.channel.id,
 			quantity,

@@ -9,186 +9,68 @@ export * from './util';
 
 // https://oldschool.runescape.wiki/w/Armour/Highest_bonuses
 export const maxDefenceStats: { [key in DefenceGearStat]: number } = {
-	[GearStat.DefenceCrush]: 505,
-	[GearStat.DefenceMagic]: 238,
-	[GearStat.DefenceRanged]: 542,
-	[GearStat.DefenceSlash]: 521,
-	[GearStat.DefenceStab]: 519
+	[GearStat.MeleeBlock]: 1000,
+	[GearStat.MeleeDefence]: 1000,
+	[GearStat.RangedBlock]: 1000,
+	[GearStat.RangedDefence]: 1000,
+	[GearStat.MagicBlock]: 1000,
+	[GearStat.MagicDefence]: 1000
 };
 
 export const maxOffenceStats: { [key in OffenceGearStat]: number } = {
-	[GearStat.AttackCrush]: 214,
-	[GearStat.AttackMagic]: 177,
-	[GearStat.AttackRanged]: 246,
-	[GearStat.AttackSlash]: 182,
-	[GearStat.AttackStab]: 177
+	[GearStat.MeleeAccuracy]: 1000,
+	[GearStat.MeleeAttack]: 1000,
+	[GearStat.RangedAccuracy]: 1000,
+	[GearStat.RangedAttack]: 1000,
+	[GearStat.MagicAccuracy]: 1000,
+	[GearStat.MagicAttack]: 1000
 };
 
 export const maxOtherStats: { [key in OtherGearStat]: number } = {
-	[GearStat.MeleeStrength]: 204,
-	[GearStat.RangedStrength]: 172,
-	[GearStat.MagicDamage]: 38,
-	[GearStat.Prayer]: 66
+	[GearStat.ResistanceArcane]: 1000,
+	[GearStat.ResistanceCold]: 1000,
+	[GearStat.ResistanceHeat]: 1000,
+	[GearStat.ResistancePhysical]: 1000,
+	[GearStat.ResistancePoison]: 1000,
+	[GearStat.Health]: 1000
 };
 
 export const defaultGear: GearSetup = {
 	[EquipmentSlot.TwoHanded]: null,
 	[EquipmentSlot.Ammo]: null,
-	[EquipmentSlot.Body]: null,
+	[EquipmentSlot.Chest]: null,
 	[EquipmentSlot.Cape]: null,
-	[EquipmentSlot.Feet]: null,
-	[EquipmentSlot.Hands]: null,
-	[EquipmentSlot.Head]: null,
+	[EquipmentSlot.Boots]: null,
+	[EquipmentSlot.Gloves]: null,
+	[EquipmentSlot.Helm]: null,
 	[EquipmentSlot.Legs]: null,
 	[EquipmentSlot.Neck]: null,
 	[EquipmentSlot.Ring]: null,
 	[EquipmentSlot.Shield]: null,
-	[EquipmentSlot.Weapon]: null
+	[EquipmentSlot.Weapon]: null,
+	[EquipmentSlot.Belt]: null,
+	[EquipmentSlot.Gems]: null
 };
 Object.freeze(defaultGear);
 
 export const globalPresets: GearPreset[] = [
 	{
-		name: 'graceful',
-		user_id: '123',
-		head: itemID('Graceful hood'),
-		neck: null,
-		body: itemID('Graceful top'),
-		legs: itemID('Graceful legs'),
-		cape: itemID('Graceful cape'),
-		two_handed: null,
-		hands: itemID('Graceful gloves'),
-		feet: itemID('Graceful boots'),
-		shield: null,
-		weapon: null,
-		ring: null,
-		ammo: null,
-		ammo_qty: null
-	},
-
-	{
-		name: 'carpenter',
-		user_id: '123',
-		head: itemID("Carpenter's helmet"),
-		neck: null,
-		body: itemID("Carpenter's shirt"),
-		legs: itemID("Carpenter's trousers"),
-		cape: null,
-		two_handed: null,
-		hands: null,
-		feet: itemID("Carpenter's boots"),
-		shield: null,
-		weapon: null,
-		ring: null,
-		ammo: null,
-		ammo_qty: null
-	},
-
-	{
-		name: 'rogue',
-		user_id: '123',
-		head: itemID('Rogue mask'),
-		neck: null,
-		body: itemID('Rogue top'),
-		legs: itemID('Rogue trousers'),
-		cape: null,
-		two_handed: null,
-		hands: itemID('Rogue gloves'),
-		feet: itemID('Rogue boots'),
-		shield: null,
-		weapon: null,
-		ring: null,
-		ammo: null,
-		ammo_qty: null
-	},
-
-	{
-		name: 'clue',
-		user_id: '123',
-		head: itemID('Helm of raedwald'),
-		neck: null,
-		body: itemID('Clue hunter garb'),
-		legs: itemID('Clue hunter trousers'),
-		cape: itemID('Clue hunter cloak'),
-		two_handed: null,
-		hands: itemID('Clue hunter gloves'),
-		feet: itemID('Clue hunter boots'),
-		shield: null,
-		weapon: null,
-		ring: null,
-		ammo: null,
-		ammo_qty: null
-	},
-
-	{
-		name: 'angler',
-		user_id: '123',
-		head: itemID('Angler hat'),
-		neck: null,
-		body: itemID('Angler top'),
-		legs: itemID('Angler waders'),
-		cape: null,
-		two_handed: null,
-		hands: null,
-		feet: itemID('Angler boots'),
-		shield: null,
-		weapon: null,
-		ring: null,
-		ammo: null,
-		ammo_qty: null
-	},
-
-	{
-		name: 'pyro',
-		user_id: '123',
-		head: itemID('Pyromancer hood'),
-		neck: null,
-		body: itemID('Pyromancer garb'),
-		legs: itemID('Pyromancer robe'),
-		cape: null,
-		two_handed: null,
-		hands: null,
-		feet: itemID('Pyromancer boots'),
-		shield: null,
-		weapon: null,
-		ring: null,
-		ammo: null,
-		ammo_qty: null
-	},
-
-	{
-		name: 'prospector',
-		user_id: '123',
-		head: itemID('Prospector helmet'),
-		neck: null,
-		body: itemID('Prospector jacket'),
-		legs: itemID('Prospector legs'),
-		cape: null,
-		two_handed: null,
-		hands: null,
-		feet: itemID('Prospector boots'),
-		shield: null,
-		weapon: null,
-		ring: null,
-		ammo: null,
-		ammo_qty: null
-	},
-
-	{
 		name: 'lumberjack',
 		user_id: '123',
-		head: itemID('Lumberjack hat'),
+		helm: itemID('Lumberjack hat'),
 		neck: null,
-		body: itemID('Lumberjack top'),
+		chest: itemID('Lumberjack top'),
 		legs: itemID('Lumberjack legs'),
 		cape: null,
 		two_handed: null,
-		hands: null,
-		feet: itemID('Lumberjack boots'),
+		gloves: null,
+		boots: itemID('Lumberjack boots'),
 		shield: null,
 		weapon: null,
 		ring: null,
 		ammo: null,
-		ammo_qty: null
+		ammo_qty: null,
+		belt: null,
+		gems: null
 	}
 ];

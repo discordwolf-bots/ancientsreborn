@@ -1,18 +1,15 @@
 import { activity_type_enum } from '@prisma/client';
 import { MessageAttachment, MessageOptions } from 'discord.js';
-import { sumArr, Time } from 'e';
+import { Time } from 'e';
 import { KlasaMessage, KlasaUser } from 'klasa';
 import { Bank } from 'oldschooljs';
 import { toKMB } from 'oldschooljs/dist/util';
 
-import { TOBRooms } from '../../data/tob';
 import { prisma } from '../../settings/prisma';
-import { UserSettings } from '../../settings/types/UserSettings';
 import { SkillsEnum } from '../../skilling/types';
 import { sorts } from '../../sorts';
-import { InfernoOptions } from '../../types/minions';
-import { formatDuration, stringMatches } from '../../util';
-import { barChart, lineChart, pieChart } from '../../util/chart';
+import { stringMatches } from '../../util';
+import { barChart, pieChart } from '../../util/chart';
 import killableMonsters from '../data/killableMonsters';
 
 interface DataPiece {
@@ -104,111 +101,6 @@ GROUP BY data->>'monsterID';`;
 		}
 	},
 	{
-		name: 'Global Inferno Death Times',
-		run: async () => {
-			const result: { mins: number; count: number }[] =
-				await prisma.$queryRaw`SELECT mins, COUNT(mins) FROM (SELECT ((data->>'deathTime')::int / 1000 / 60) as mins
-FROM activity
-WHERE type = 'Inferno'
-AND data->>'deathTime' IS NOT NULL) death_mins
-GROUP BY mins;`;
-			return lineChart(
-				'Global Inferno Death Times',
-				val => `${val} Mins`,
-				result.map(i => [i.mins.toString(), i.count])
-			);
-		}
-	},
-	{
-		name: 'Personal Inferno Death Times',
-		run: async (user: KlasaUser) => {
-			const result: { mins: number; count: number }[] =
-				await prisma.$queryRaw`SELECT mins, COUNT(mins) FROM (SELECT ((data->>'deathTime')::int / 1000 / 60) as mins
-FROM activity
-WHERE type = 'Inferno'
-AND user_id = ${BigInt(user.id)}
-AND data->>'deathTime' IS NOT NULL) death_mins
-GROUP BY mins;`;
-			return lineChart(
-				'Personal Inferno Death Times',
-				val => `${val} Mins`,
-				result.map(i => [i.mins.toString(), i.count])
-			);
-		}
-	},
-	{
-		name: 'Personal Inferno',
-		run: async (user: KlasaUser) => {
-			const activities = await prisma.activity.findMany({
-				where: {
-					user_id: BigInt(user.id),
-					type: 'Inferno'
-				},
-				orderBy: {
-					finish_date: 'asc'
-				}
-			});
-			let completedAt = null;
-			let postFirstCapeCompletions = 0;
-			let totalCost = new Bank();
-			for (let i = 0; i < activities.length; i++) {
-				const data = activities[i].data as unknown as InfernoOptions;
-				if (completedAt === null && !data.deathTime) {
-					completedAt = i + 1;
-				} else if (!data.deathTime && completedAt !== null) {
-					postFirstCapeCompletions++;
-				}
-				totalCost.add(data.cost);
-			}
-			return {
-				content: `**First Cape:** ${completedAt ? `After ${completedAt} attempts` : 'Never'}
-**Extra Capes:** ${postFirstCapeCompletions}
-**Total Time Spent in Inferno:** ${formatDuration(sumArr(activities.map(i => i.duration)))}`,
-				bank: totalCost,
-				title: `${user.username}'s Personal Inferno`
-			};
-		}
-	},
-	{
-		name: 'Personal TOB Wipes',
-		run: async (user: KlasaUser) => {
-			const result: { wiped_room: number; count: number }[] =
-				await prisma.$queryRawUnsafe(`SELECT (data->>'wipedRoom')::int AS wiped_room, COUNT(data->>'wipedRoom')::int
-FROM activity
-WHERE type = 'TheatreOfBlood'
-AND completed = true
-AND data->>'wipedRoom' IS NOT NULL
-AND user_id = ${BigInt(user.id)}
-OR (data->>'users')::jsonb @> ${wrap(user.id)}::jsonb
-GROUP BY 1;`);
-			if (result.length === 0) {
-				return { content: "You haven't wiped in any Theatre of Blood raids yet." };
-			}
-			return barChart(
-				'Personal TOB Deaths',
-				val => `${val} Deaths`,
-				result.map(i => [TOBRooms[i.wiped_room].name, i.count])
-			);
-		}
-	},
-	{
-		name: 'Global TOB Wipes',
-		run: async () => {
-			const result: { wiped_room: number; count: number }[] =
-				await prisma.$queryRaw`SELECT (data->>'wipedRoom')::int AS wiped_room, COUNT(data->>'wipedRoom')::int
-FROM activity
-WHERE type = 'TheatreOfBlood'
-AND completed = true
-AND data->>'wipedRoom' IS NOT NULL
-GROUP BY 1;`;
-			return barChart(
-				'Global TOB Deaths',
-				val => `${val} Deaths`,
-				result.map(i => [TOBRooms[i.wiped_room].name, i.count])
-			);
-		}
-	},
-	{
 		name: 'Global 200ms',
 		run: async () => {
 			const result = (
@@ -228,59 +120,6 @@ WHERE "skills.${skillName}" = 200000000;`) as Promise<{ qty: number; skill_name:
 				val => `${val} 200ms`,
 				result.map(i => [i.skill_name, i.qty])
 			);
-		}
-	},
-	{
-		name: 'Personal Farmed Crops',
-		run: async (user: KlasaUser) => {
-			const result: { plant: string; qty: number }[] =
-				await prisma.$queryRaw`SELECT data->>'plantsName' as plant, COUNT(data->>'plantsName') AS qty
-FROM activity
-WHERE type = 'Farming'
-AND data->>'plantsName' IS NOT NULL
-AND user_id = ${BigInt(user.id)}
-GROUP BY data->>'plantsName'`;
-			result.sort((a, b) => b.qty - a.qty);
-			return barChart(
-				'Global Farmed Crops',
-				val => `${val} Crops`,
-				result.map(i => [i.plant, i.qty])
-			);
-		}
-	},
-	{
-		name: 'Global Farmed Crops',
-		run: async () => {
-			const result: { plant: string; qty: number }[] =
-				await prisma.$queryRaw`SELECT data->>'plantsName' as plant, COUNT(data->>'plantsName') AS qty
-FROM activity
-WHERE type = 'Farming'
-AND data->>'plantsName' IS NOT NULL
-GROUP BY data->>'plantsName'`;
-			result.sort((a, b) => b.qty - a.qty);
-			return barChart(
-				'Global Farmed Crops',
-				val => `${val} Crops`,
-				result.map(i => [i.plant, i.qty])
-			);
-		}
-	},
-	{
-		name: 'Personal TOB Cost',
-		run: async (user: KlasaUser) => {
-			return {
-				bank: new Bank(user.settings.get(UserSettings.TOBCost)),
-				title: `${user.username}'s TOB Cost`
-			};
-		}
-	},
-	{
-		name: 'Personal TOB Loot',
-		run: async (user: KlasaUser) => {
-			return {
-				bank: new Bank(user.settings.get(UserSettings.TOBLoot)),
-				title: `${user.username}'s TOB Loot`
-			};
 		}
 	}
 ];

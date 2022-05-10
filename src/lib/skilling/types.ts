@@ -19,9 +19,9 @@ export enum SkillsEnum {
 
 	Piercing = 'piercing',
 	Fencing = 'fencing',
-	HeavyWeapons = 'heavyweapons',
-	MagicStaffs = 'magicstaffs',
-	RangedWeapons = 'rangedweapons',
+	HeavyWeapons = 'heavyWeapons',
+	MagicStaffs = 'magicStaffs',
+	RangedWeapons = 'rangedWeapons',
 
 	Strength = 'strength',
 	Dexterity = 'dexterity',
@@ -83,7 +83,7 @@ export interface Production {
 	xp: number;
 	id: number;
 	name: string;
-	input: ItemBank;
+	input: ItemBank | Bank;
 	timePer?: number;
 	hourPer?: number;
 	minutePer?: number;

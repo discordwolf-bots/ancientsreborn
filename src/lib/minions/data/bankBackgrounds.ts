@@ -240,10 +240,7 @@ const backgroundImages: BankBackground[] = [
 		collectionLogItemsNeeded: resolveNameBank({
 			Tangleroot: 1
 		}),
-		gpCost: 100_000_000,
-		skillsNeeded: {
-			farming: 99
-		}
+		gpCost: 100_000_000
 	},
 	{
 		id: 19,

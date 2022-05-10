@@ -3,7 +3,6 @@ import { KlasaUser } from 'klasa';
 import { SlashCommandInteraction } from 'mahoji/dist/lib/structures/SlashCommandInteraction';
 import { Bank, LootTable } from 'oldschooljs';
 
-import { Emoji } from '../../../lib/constants';
 import { handleMahojiConfirmation } from '../../mahojiSettings';
 
 const HatTable = new LootTable()
@@ -46,7 +45,7 @@ export async function crackerCommand({
 
 	await handleMahojiConfirmation(
 		interaction,
-		`${Emoji.ChristmasCracker} Are you sure you want to use your cracker on them? Either person could get the partyhat! Please confirm if you understand and wish to use it.`
+		'Are you sure you want to use your cracker on them? Either person could get the partyhat! Please confirm if you understand and wish to use it.'
 	);
 
 	await owner.removeItemsFromBank(new Bank().add('Christmas cracker', 1));
@@ -56,5 +55,5 @@ export async function crackerCommand({
 	await winner.addItemsToBank({ items: winnerLoot, collectionLog: true });
 	await loser.addItemsToBank({ items: loserLoot, collectionLog: true });
 
-	return `${Emoji.ChristmasCracker} ${owner} pulled a Christmas cracker with ${otherPerson} and....\n\n ${winner} received ${winnerLoot}, ${loser} received ${loserLoot}.`;
+	return `${owner} pulled a Christmas cracker with ${otherPerson} and....\n\n ${winner} received ${winnerLoot}, ${loser} received ${loserLoot}.`;
 }

@@ -6,25 +6,29 @@ export type UserFullGearSetup = {
 	[key in GearSetupType]: Gear;
 };
 
-export const GearSetupTypes = ['melee', 'range', 'mage', 'misc', 'skilling', 'wildy', 'fashion', 'other'] as const;
+export const GearSetupTypes = ['melee', 'ranged', 'magic', 'skilling'] as const;
 
 export type GearSetupType = typeof GearSetupTypes[number];
 
 export enum GearStat {
-	AttackStab = 'attack_stab',
-	AttackSlash = 'attack_slash',
-	AttackCrush = 'attack_crush',
-	AttackMagic = 'attack_magic',
-	AttackRanged = 'attack_ranged',
-	DefenceStab = 'defence_stab',
-	DefenceSlash = 'defence_slash',
-	DefenceCrush = 'defence_crush',
-	DefenceMagic = 'defence_magic',
-	DefenceRanged = 'defence_ranged',
-	MeleeStrength = 'melee_strength',
-	RangedStrength = 'ranged_strength',
-	MagicDamage = 'magic_damage',
-	Prayer = 'prayer'
+	Health = 'health',
+	MeleeAttack = 'meleeAttack',
+	MeleeAccuracy = 'meleeAccuracy',
+	MeleeDefence = 'meleeDefence',
+	MeleeBlock = 'meleeBlock',
+	RangedAttack = 'rangedAttack',
+	RangedAccuracy = 'rangedAccuracy',
+	RangedDefence = 'rangedDefence',
+	RangedBlock = 'rangedBlock',
+	MagicAttack = 'magicAttack',
+	MagicAccuracy = 'magicAccuracy',
+	MagicDefence = 'magicDefence',
+	MagicBlock = 'magicBlock',
+	ResistanceHeat = 'resistanceHeat',
+	ResistanceCold = 'resistanceCold',
+	ResistancePhysical = 'resistancePhysical',
+	ResistancePoison = 'resistancePoison',
+	ResistanceArcane = 'resistanceArcane'
 }
 
 export interface GearSlotItem {
@@ -37,37 +41,49 @@ export type GearSetup = {
 };
 
 export interface GearStats {
-	attack_stab: number;
-	attack_slash: number;
-	attack_crush: number;
-	attack_magic: number;
-	attack_ranged: number;
-	defence_stab: number;
-	defence_slash: number;
-	defence_crush: number;
-	defence_magic: number;
-	defence_ranged: number;
-	melee_strength: number;
-	ranged_strength: number;
-	magic_damage: number;
-	prayer: number;
+	health: number;
+	meleeAttack: number;
+	meleeAccuracy: number;
+	meleeDefence: number;
+	meleeBlock: number;
+	rangedAttack: number;
+	rangedAccuracy: number;
+	rangedDefence: number;
+	rangedBlock: number;
+	magicAttack: number;
+	magicAccuracy: number;
+	magicDefence: number;
+	magicBlock: number;
+	resistanceHeat: number;
+	resistanceCold: number;
+	resistancePhysical: number;
+	resistancePoison: number;
+	resistanceArcane: number;
 }
 
 export type OffenceGearStat =
-	| GearStat.AttackMagic
-	| GearStat.AttackRanged
-	| GearStat.AttackSlash
-	| GearStat.AttackStab
-	| GearStat.AttackCrush;
+	| GearStat.MeleeAttack
+	| GearStat.RangedAttack
+	| GearStat.MagicAttack
+	| GearStat.MeleeAccuracy
+	| GearStat.RangedAccuracy
+	| GearStat.MagicAccuracy;
 
 export type DefenceGearStat =
-	| GearStat.DefenceMagic
-	| GearStat.DefenceRanged
-	| GearStat.DefenceSlash
-	| GearStat.DefenceStab
-	| GearStat.DefenceCrush;
+	| GearStat.MeleeDefence
+	| GearStat.RangedDefence
+	| GearStat.MagicDefence
+	| GearStat.MeleeBlock
+	| GearStat.RangedBlock
+	| GearStat.MagicBlock;
 
-export type OtherGearStat = GearStat.MeleeStrength | GearStat.RangedStrength | GearStat.MagicDamage | GearStat.Prayer;
+export type OtherGearStat =
+	| GearStat.Health
+	| GearStat.ResistanceHeat
+	| GearStat.ResistanceCold
+	| GearStat.ResistancePhysical
+	| GearStat.ResistancePoison
+	| GearStat.ResistanceArcane;
 
 export type GearRequired = Partial<{
 	[key in EquipmentSlot]: number[];

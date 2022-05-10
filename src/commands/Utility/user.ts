@@ -24,7 +24,7 @@ export default class extends BotCommand {
 			.setColor(16_098_851)
 			.setThumbnail(user.displayAvatarURL())
 			.setDescription(`${user.badges} **${user.username}**`)
-			.addField('RuneScape Username', user.settings.get(UserSettings.RSN) || 'Not Set', true)
+			.addField('RuneScape Username', user.settings.get(UserSettings.Account) || 'Not Set', true)
 			.addField('Discord Join Date', user.createdAt.toLocaleDateString(), true)
 			.addField('Server Join Date', member.joinedAt!.toLocaleDateString(), true);
 

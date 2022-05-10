@@ -1,19 +1,21 @@
 import { DefenceGearStat, GearStat, OffenceGearStat } from '../types';
 
 const defenceMap: { [key in DefenceGearStat]: OffenceGearStat } = {
-	[GearStat.DefenceSlash]: GearStat.AttackSlash,
-	[GearStat.DefenceStab]: GearStat.AttackStab,
-	[GearStat.DefenceCrush]: GearStat.AttackCrush,
-	[GearStat.DefenceMagic]: GearStat.AttackMagic,
-	[GearStat.DefenceRanged]: GearStat.AttackRanged
+	[GearStat.MeleeBlock]: GearStat.MeleeAccuracy,
+	[GearStat.MeleeDefence]: GearStat.MeleeAttack,
+	[GearStat.RangedBlock]: GearStat.RangedAccuracy,
+	[GearStat.RangedDefence]: GearStat.RangedAttack,
+	[GearStat.MagicBlock]: GearStat.MagicAccuracy,
+	[GearStat.MagicDefence]: GearStat.MagicAttack
 };
 
 const offenceMap: { [key in OffenceGearStat]: DefenceGearStat } = {
-	[GearStat.AttackSlash]: GearStat.DefenceSlash,
-	[GearStat.AttackStab]: GearStat.DefenceStab,
-	[GearStat.AttackCrush]: GearStat.DefenceCrush,
-	[GearStat.AttackMagic]: GearStat.DefenceMagic,
-	[GearStat.AttackRanged]: GearStat.DefenceRanged
+	[GearStat.MeleeAccuracy]: GearStat.MeleeBlock,
+	[GearStat.MeleeAttack]: GearStat.MeleeDefence,
+	[GearStat.RangedAccuracy]: GearStat.RangedBlock,
+	[GearStat.RangedAttack]: GearStat.RangedDefence,
+	[GearStat.MagicAccuracy]: GearStat.MagicBlock,
+	[GearStat.MagicAttack]: GearStat.MagicDefence
 };
 
 export function inverseOfDefenceStat(stat: DefenceGearStat) {

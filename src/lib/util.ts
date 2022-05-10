@@ -16,7 +16,7 @@ import {
 	Util
 } from 'discord.js';
 import { APIInteractionGuildMember, APIUser } from 'discord-api-types';
-import { calcWhatPercent, objectEntries, randArrItem, randInt, round, shuffleArr, Time } from 'e';
+import { calcWhatPercent, objectEntries, randArrItem, randInt, shuffleArr, Time } from 'e';
 import { KlasaClient, KlasaMessage, KlasaUser, SettingsFolder, SettingsUpdateResults } from 'klasa';
 import murmurHash from 'murmurhash';
 import { Bank } from 'oldschooljs';
@@ -27,16 +27,10 @@ import { promisify } from 'util';
 
 import { CENA_CHARS, continuationChars, PerkTier, skillEmoji, SupportServer } from './constants';
 import { DefenceGearStat, GearSetupType, GearSetupTypes, GearStat, OffenceGearStat } from './gear/types';
-import clueTiers from './minions/data/clueTiers';
 import { Consumable } from './minions/types';
-import { POHBoosts } from './poh';
-import { Rune } from './skilling/skills/runecraft';
-import { SkillsEnum } from './skilling/types';
 import { ArrayItemsResolved, Skills } from './types';
-import { GroupMonsterActivityTaskOptions, RaidsOptions, TheatreOfBloodTaskOptions } from './types/minions';
+import { GroupMonsterActivityTaskOptions } from './types/minions';
 import getUsersPerkTier from './util/getUsersPerkTier';
-import itemID from './util/itemID';
-import resolveItems from './util/resolveItems';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const emojiRegex = require('emoji-regex');
@@ -131,13 +125,13 @@ export function saidYes(content: string) {
 	return newContent === 'y' || newContent === 'yes';
 }
 
-export function convertXPtoLVL(xp: number, cap = 99) {
+export function convertXPtoLVL(xp: number, cap = 404) {
 	let points = 0;
 
 	for (let lvl = 1; lvl <= cap; lvl++) {
-		points += Math.floor(lvl + 300 * Math.pow(2, lvl / 7));
+		points += Math.floor(10 * Math.pow(3, lvl) - 10);
 
-		if (Math.floor(points / 4) >= xp + 1) {
+		if (points >= xp + 1) {
 			return lvl;
 		}
 	}
@@ -184,46 +178,6 @@ export function stripEmojis(str: string) {
 	return str.replace(rawEmojiRegex, '');
 }
 
-export const anglerBoosts = [
-	[itemID('Angler hat'), 0.4],
-	[itemID('Angler top'), 0.8],
-	[itemID('Angler waders'), 0.6],
-	[itemID('Angler boots'), 0.2]
-];
-
-export function anglerBoostPercent(user: KlasaUser) {
-	const skillingSetup = user.getGear('skilling');
-	let amountEquipped = 0;
-	let boostPercent = 0;
-	for (const [id, percent] of anglerBoosts) {
-		if (skillingSetup.hasEquipped([id])) {
-			boostPercent += percent;
-			amountEquipped++;
-		}
-	}
-	if (amountEquipped === 4) {
-		boostPercent += 0.5;
-	}
-	return round(boostPercent, 1);
-}
-
-const rogueOutfit = resolveItems(['Rogue mask', 'Rogue top', 'Rogue trousers', 'Rogue gloves', 'Rogue boots']);
-
-export function rogueOutfitPercentBonus(user: KlasaUser): number {
-	const skillingSetup = user.getGear('skilling');
-	let amountEquipped = 0;
-	for (const id of rogueOutfit) {
-		if (skillingSetup.hasEquipped([id])) {
-			amountEquipped++;
-		}
-	}
-	return amountEquipped * 20;
-}
-
-export function rollRogueOutfitDoubleLoot(user: KlasaUser): boolean {
-	return randInt(1, 100) <= rogueOutfitPercentBonus(user);
-}
-
 export function generateContinuationChar(user: KlasaUser) {
 	const baseChar =
 		user.perkTier > PerkTier.One
@@ -257,21 +211,18 @@ export function isGroupActivity(data: any): data is GroupMonsterActivityTaskOpti
 	return 'users' in data;
 }
 
-export function isRaidsActivity(data: any): data is RaidsOptions {
-	return 'challengeMode' in data;
-}
-
-export function isTobActivity(data: any): data is TheatreOfBloodTaskOptions {
-	return 'wipedRoom' in data;
-}
-
 export function sha256Hash(x: string) {
 	return crypto.createHash('sha256').update(x, 'utf8').digest('hex');
 }
 
-export function countSkillsAtleast99(user: KlasaUser) {
+export function countSkillsAtleast100(user: KlasaUser) {
 	const skills = (user.settings.get('skills') as SettingsFolder).toJSON() as Record<string, number>;
 	return Object.values(skills).filter(xp => convertXPtoLVL(xp) >= 99).length;
+}
+
+export function countSkillsAtleastX(user: KlasaUser, search: number) {
+	const skills = (user.settings.get('skills') as SettingsFolder).toJSON() as Record<string, number>;
+	return Object.values(skills).filter(xp => convertXPtoLVL(xp) >= search).length;
 }
 
 export function getSupportGuild(client: Client): Guild | null {
@@ -302,20 +253,14 @@ export function channelIsSendable(channel: Channel | undefined | null): channel 
 	return true;
 }
 export function calcCombatLevel(skills: Skills) {
-	const defence = skills.defence ? convertXPtoLVL(skills.defence) : 1;
-	const ranged = skills.ranged ? convertXPtoLVL(skills.ranged) : 1;
-	const hitpoints = skills.hitpoints ? convertXPtoLVL(skills.hitpoints) : 1;
-	const magic = skills.magic ? convertXPtoLVL(skills.magic) : 1;
-	const prayer = skills.prayer ? convertXPtoLVL(skills.prayer) : 1;
-	const attack = skills.attack ? convertXPtoLVL(skills.attack) : 1;
 	const strength = skills.strength ? convertXPtoLVL(skills.strength) : 1;
+	const dexterity = skills.dexterity ? convertXPtoLVL(skills.dexterity) : 1;
+	const defence = skills.defence ? convertXPtoLVL(skills.defence) : 1;
+	const intellect = skills.intellect ? convertXPtoLVL(skills.intellect) : 1;
 
-	const base = 0.25 * (defence + hitpoints + Math.floor(prayer / 2));
-	const melee = 0.325 * (attack + strength);
-	const range = 0.325 * (Math.floor(ranged / 2) + ranged);
-	const mage = 0.325 * (Math.floor(magic / 2) + magic);
-	return Math.floor(base + Math.max(melee, range, mage));
+	return Math.floor((strength + dexterity + defence + intellect) * 0.32);
 }
+
 export function skillsMeetRequirements(skills: Skills, requirements: Skills) {
 	for (const [skillName, level] of objectEntries(requirements)) {
 		if ((skillName as string) === 'combat') {
@@ -420,22 +365,6 @@ export function formatItemBoosts(items: ItemBank[]) {
 		}
 	}
 	return str.join(', ');
-}
-
-export function formatPohBoosts(boosts: POHBoosts) {
-	const bonusStr = [];
-	const slotStr = [];
-
-	for (const [slot, objBoosts] of objectEntries(boosts)) {
-		if (objBoosts === undefined) continue;
-		for (const [name, boostPercent] of objectEntries(objBoosts)) {
-			bonusStr.push(`${boostPercent}% for ${name}`);
-		}
-
-		slotStr.push(`${slot.replace(/\b\S/g, t => t.toUpperCase())}: (${bonusStr.join(' or ')})\n`);
-	}
-
-	return slotStr.join(', ');
 }
 
 export function updateBankSetting(
@@ -602,19 +531,21 @@ export function murMurHashChance(input: string, percent: number) {
 }
 
 export function convertAttackStyleToGearSetup(style: OffenceGearStat | DefenceGearStat) {
-	let setup: GearSetupType = 'melee';
+	let setup: GearSetupType = 'skilling';
 
 	switch (style) {
-		case GearStat.AttackMagic:
-			setup = 'mage';
+		case GearStat.MeleeAttack:
+			setup = 'melee';
 			break;
-		case GearStat.AttackRanged:
-			setup = 'range';
+		case GearStat.RangedAttack:
+			setup = 'magic';
+			break;
+		case GearStat.MagicAttack:
+			setup = 'ranged';
 			break;
 		default:
 			break;
 	}
-
 	return setup;
 }
 
@@ -629,16 +560,16 @@ export function convertBankToPerHourStats(bank: Bank, time: number) {
 /**
  * Removes extra clue scrolls from loot, if they got more than 1 or if they already own 1.
  */
-export function deduplicateClueScrolls({ loot, currentBank }: { loot: Bank; currentBank: Bank }) {
+export function deduplicateClueScrolls({ loot }: { loot: Bank }) {
 	const newLoot = loot.clone();
-	for (const { scrollID } of clueTiers) {
-		if (!newLoot.has(scrollID)) continue;
-		if (currentBank.has(scrollID)) {
-			newLoot.remove(scrollID, newLoot.amount(scrollID));
-		} else {
-			newLoot.bank[scrollID] = 1;
-		}
-	}
+	// for (const { scrollID } of clueTiers) {
+	// 	if (!newLoot.has(scrollID)) continue;
+	// 	if (currentBank.has(scrollID)) {
+	// 		newLoot.remove(scrollID, newLoot.amount(scrollID));
+	// 	} else {
+	// 		newLoot.bank[scrollID] = 1;
+	// 	}
+	// }
 	return newLoot;
 }
 
@@ -669,16 +600,6 @@ export function clamp(val: number, min: number, max: number) {
 
 export function calcPerHour(value: number, duration: number) {
 	return (value / (duration / Time.Minute)) * 60;
-}
-
-export function calcMaxRCQuantity(rune: Rune, user: KlasaUser) {
-	const level = user.skillLevel(SkillsEnum.Runecraft);
-	for (let i = rune.levels.length; i > 0; i--) {
-		const [levelReq, qty] = rune.levels[i - 1];
-		if (level >= levelReq) return qty;
-	}
-
-	return 0;
 }
 
 export function convertDJSUserToAPIUser(user: DJSUser | KlasaUser): APIUser {

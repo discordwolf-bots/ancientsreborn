@@ -1,10 +1,7 @@
-import { objectEntries } from 'e';
 import { KlasaUser } from 'klasa';
 import { Bank } from 'oldschooljs';
 import { Item } from 'oldschooljs/dist/meta/types';
 
-import { growablePets } from '../growablePets';
-import { implings } from '../implings';
 import getOSItem from '../util/getOSItem';
 import resolveItems from '../util/resolveItems';
 
@@ -1901,7 +1898,6 @@ export const questCL = resolveItems([
 	'Hardleather gloves'
 ]);
 
-export const implingsCL = objectEntries(implings).map(m => Number(m[0]));
 export const gracefulHoods = [
 	'Graceful hood',
 	'Arceuus graceful hood',
@@ -1986,13 +1982,7 @@ export const gracefulCL = resolveItems([
 	...gracefulCapes
 ]).filter(id => !resolveItems(['Max cape', 'Agility cape', 'Agility cape(t)']).includes(id));
 
-export const allPetIDs = [
-	...allPetsCL,
-	...chambersOfXericMetamorphPets,
-	...tobMetamorphPets,
-	...growablePets.map(petSeries => petSeries.stages).flat(1),
-	...resolveItems(['Little parasite', 'Dark squirrel'])
-];
+export const allPetIDs = [...allPetsCL];
 
 export const antiSantaOutfit = new Bank({
 	'Antisanta mask': 1,

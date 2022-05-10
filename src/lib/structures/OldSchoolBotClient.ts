@@ -6,7 +6,6 @@ import { prisma } from '../settings/prisma';
 import { syncActivityCache } from '../settings/settings';
 import { startupScripts } from '../startupScripts';
 import { logError } from '../util/logError';
-import { piscinaPool } from '../workers';
 
 const { production } = clientOptions;
 
@@ -21,7 +20,6 @@ import('../settings/schemas/ClientSchema');
 export class OldSchoolBotClient extends Client {
 	public oneCommandAtATimeCache = new Set<string>();
 	public secondaryUserBusyCache = new Set<string>();
-	public piscinaPool = piscinaPool;
 	public production = production ?? false;
 	_emojis: any;
 

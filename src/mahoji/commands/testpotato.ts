@@ -1,22 +1,17 @@
-import { Prisma } from '@prisma/client';
 import { uniqueArr } from 'e';
 import { KlasaUser } from 'klasa';
 import { ApplicationCommandOptionType, CommandRunOptions } from 'mahoji';
 import { Bank, Items } from 'oldschooljs';
-import { EquipmentSlot } from 'oldschooljs/dist/meta/types';
 import { convertLVLtoXP, itemID } from 'oldschooljs/dist/util';
 
 import { client } from '../..';
 import { production } from '../../config';
 import { BitField, MAX_QP } from '../../lib/constants';
-import { TOBMaxMageGear, TOBMaxMeleeGear, TOBMaxRangeGear } from '../../lib/data/tob';
 import { effectiveMonsters } from '../../lib/minions/data/killableMonsters';
 import { allOpenables } from '../../lib/openables';
-import { Minigames } from '../../lib/settings/minigames';
 import { prisma } from '../../lib/settings/prisma';
 import { UserSettings } from '../../lib/settings/types/UserSettings';
 import Skills from '../../lib/skilling/skills';
-import { Gear } from '../../lib/structures/Gear';
 import { stringMatches } from '../../lib/util';
 import getOSItem from '../../lib/util/getOSItem';
 import { logError } from '../../lib/util/logError';
@@ -69,17 +64,7 @@ async function giveGear(user: KlasaUser) {
 		.add('Bandos godsword')
 		.add('Toxic blowpipe');
 	await user.addItemsToBank({ items: loot, collectionLog: false });
-	await user.settings.update(UserSettings.Blowpipe, {
-		scales: 100_000,
-		dartQuantity: 100_000,
-		dartID: itemID('Rune dart')
-	});
-	await user.settings.update(UserSettings.Gear.Melee, TOBMaxMeleeGear);
-	await user.settings.update(UserSettings.Gear.Range, TOBMaxRangeGear);
-	await user.settings.update(UserSettings.Gear.Mage, TOBMaxMageGear);
-	await user.settings.update(UserSettings.TentacleCharges, 10_000);
 	await user.settings.update(UserSettings.GP, 1_000_000_000);
-	await user.settings.update(UserSettings.Slayer.SlayerPoints, 100_000);
 
 	await user.getPOH();
 	await prisma.playerOwnedHouse.update({
@@ -98,7 +83,6 @@ async function resetAccount(user: KlasaUser) {
 	await prisma.commandUsage.deleteMany({ where: { user_id: user.id } });
 	await prisma.gearPreset.deleteMany({ where: { user_id: user.id } });
 	await prisma.giveaway.deleteMany({ where: { user_id: user.id } });
-	await prisma.lastManStandingGame.deleteMany({ where: { user_id: BigInt(user.id) } });
 	await prisma.minigame.deleteMany({ where: { user_id: user.id } });
 	await prisma.newUser.deleteMany({ where: { id: user.id } });
 	await prisma.playerOwnedHouse.deleteMany({ where: { user_id: user.id } });
@@ -106,20 +90,6 @@ async function resetAccount(user: KlasaUser) {
 	await prisma.user.deleteMany({ where: { id: user.id } });
 	await user.settings.sync(true);
 	return 'Reset all your data.';
-}
-
-async function setMinigameKC(user: KlasaUser, _minigame: string, kc: number) {
-	const minigame = Minigames.find(m => m.column === _minigame.toLowerCase());
-	if (!minigame) return 'No kc set because invalid minigame.';
-	await prisma.minigame.update({
-		where: {
-			user_id: user.id
-		},
-		data: {
-			[minigame.column]: kc
-		}
-	});
-	return `Set your ${minigame.name} KC to ${kc}.`;
 }
 
 async function setXP(user: KlasaUser, skillName: string, xp: number) {
@@ -138,12 +108,6 @@ const spawnPresets = [
 	['openables', openablesBank],
 	['random', new Bank()]
 ] as const;
-
-const nexSupplies = new Bank()
-	.add('Shark', 10_000)
-	.add('Saradomin brew(4)', 100)
-	.add('Super restore(4)', 100)
-	.add('Ranging potion(4)', 100);
 
 export const testPotatoCommand: OSBMahojiCommand | null = production
 	? null
@@ -207,37 +171,7 @@ export const testPotatoCommand: OSBMahojiCommand | null = production
 							description: 'The xp you want.',
 							required: true,
 							min_value: 1,
-							max_value: 200_000_000
-						}
-					]
-				},
-				{
-					type: ApplicationCommandOptionType.Subcommand,
-					name: 'setminigamekc',
-					description: 'Set minigame kc.',
-					options: [
-						{
-							type: ApplicationCommandOptionType.String,
-							name: 'minigame',
-							description: 'The minigame you want to set your KC for.',
-							required: true,
-							autocomplete: async value => {
-								return Minigames.filter(i => {
-									if (!value) return true;
-									return [i.name.toLowerCase(), i.aliases].some(i => i.includes(value.toLowerCase()));
-								}).map(i => ({
-									name: i.name,
-									value: i.column
-								}));
-							}
-						},
-						{
-							type: ApplicationCommandOptionType.Integer,
-							name: 'kc',
-							description: 'The minigame KC you want.',
-							required: true,
-							min_value: 0,
-							max_value: 10_000
+							max_value: 659_392_630
 						}
 					]
 				},
@@ -249,12 +183,12 @@ export const testPotatoCommand: OSBMahojiCommand | null = production
 				{
 					type: ApplicationCommandOptionType.Subcommand,
 					name: 'gear',
-					description: 'Spawn food, pots, runes, coins, blowpipe, POH with a pool, and BiS gear.'
+					description: 'Spawn food, credits and BiS gear.'
 				},
 				{
 					type: ApplicationCommandOptionType.Subcommand,
 					name: 'max',
-					description: 'Set all your stats to the maximum level, and get max QP.'
+					description: 'Set all your stats to the maximum level'
 				},
 				{
 					type: ApplicationCommandOptionType.Subcommand,
@@ -294,16 +228,6 @@ export const testPotatoCommand: OSBMahojiCommand | null = production
 							]
 						}
 					]
-				},
-				{
-					type: ApplicationCommandOptionType.Subcommand,
-					name: 'nexhax',
-					description: 'Gives you everything needed for Nex.'
-				},
-				{
-					type: ApplicationCommandOptionType.Subcommand,
-					name: 'badnexgear',
-					description: 'Gives you bad nex gear ahahahahaha'
 				},
 				{
 					type: ApplicationCommandOptionType.Subcommand,
@@ -353,11 +277,8 @@ export const testPotatoCommand: OSBMahojiCommand | null = production
 				patron?: { tier: string };
 				gear?: {};
 				reset?: {};
-				setminigamekc?: { minigame: string; kc: number };
 				setxp?: { skill: string; xp: number };
 				spawn?: { preset?: string; collectionlog?: boolean; item?: string; items?: string };
-				nexhax?: {};
-				badnexgear?: {};
 				setmonsterkc?: { monster: string; kc: string };
 				irontoggle?: {};
 			}>) => {
@@ -385,9 +306,6 @@ export const testPotatoCommand: OSBMahojiCommand | null = production
 				}
 				if (options.reset) {
 					return resetAccount(user);
-				}
-				if (options.setminigamekc) {
-					return setMinigameKC(user, options.setminigamekc.minigame, options.setminigamekc.kc);
 				}
 				if (options.setxp) {
 					return setXP(user, options.setxp.skill, options.setxp.xp);
@@ -422,53 +340,6 @@ export const testPotatoCommand: OSBMahojiCommand | null = production
 
 					await user.addItemsToBank({ items: bankToGive, collectionLog: Boolean(collectionlog) });
 					return `Spawned: ${bankToGive.toString().slice(0, 500)}.`;
-				}
-				if (options.nexhax) {
-					const gear = new Gear({
-						[EquipmentSlot.Weapon]: 'Zaryte crossbow',
-						[EquipmentSlot.Shield]: 'Elysian spirit shield',
-						[EquipmentSlot.Ammo]: 'Ruby dragon bolts(e)',
-						[EquipmentSlot.Body]: 'Armadyl chestplate',
-						[EquipmentSlot.Legs]: 'Armadyl chainskirt',
-						[EquipmentSlot.Feet]: 'Pegasian boots',
-						[EquipmentSlot.Cape]: "Ava's assembler",
-						[EquipmentSlot.Neck]: 'Necklace of anguish',
-						[EquipmentSlot.Hands]: 'Zaryte vambraces',
-						[EquipmentSlot.Head]: 'Armadyl helmet',
-						[EquipmentSlot.Ring]: 'Archers ring (i)'
-					});
-					gear.ammo!.quantity = 1_000_000;
-					await mahojiUserSettingsUpdate(client, user.id, {
-						gear_range: gear.raw() as Prisma.InputJsonObject,
-						skills_ranged: convertLVLtoXP(99),
-						skills_prayer: convertLVLtoXP(99),
-						skills_hitpoints: convertLVLtoXP(99),
-						skills_defence: convertLVLtoXP(99),
-						bank: user.bank().add(nexSupplies).bank,
-						GP: mahojiUser.GP + BigInt(10_000_000)
-					});
-					return 'Gave you range gear, gp, gear and stats for nex.';
-				}
-				if (options.badnexgear) {
-					const gear = new Gear({
-						[EquipmentSlot.Weapon]: 'Armadyl crossbow',
-						// [EquipmentSlot.Shield]: nu,
-						[EquipmentSlot.Ammo]: 'Ruby dragon bolts(e)',
-						[EquipmentSlot.Body]: "Karil's leathertop",
-						[EquipmentSlot.Legs]: "Karil's leatherskirt",
-						[EquipmentSlot.Feet]: 'Snakeskin boots',
-						[EquipmentSlot.Cape]: "Ava's accumulator",
-						[EquipmentSlot.Neck]: 'Amulet of accuracy',
-						[EquipmentSlot.Hands]: 'Barrows gloves',
-						[EquipmentSlot.Head]: "Karil's coif",
-						[EquipmentSlot.Ring]: 'Archers ring'
-					});
-					gear.ammo!.quantity = 1_000_000;
-					await mahojiUserSettingsUpdate(client, user.id, {
-						gear_range: gear.raw() as Prisma.InputJsonObject,
-						bank: user.bank().add(nexSupplies).bank
-					});
-					return 'Gave you bad nex gear';
 				}
 				if (options.setmonsterkc) {
 					const monster = effectiveMonsters.find(m =>

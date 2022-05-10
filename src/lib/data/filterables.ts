@@ -1,10 +1,7 @@
 import { KlasaUser } from 'klasa';
 import { Bank } from 'oldschooljs';
 
-import { superCompostables } from '../../commands/Minion/compostbin';
 import { UserSettings } from '../settings/types/UserSettings';
-import { gracefulItems } from '../skilling/skills/agility';
-import { Craftables } from '../skilling/skills/crafting/craftables';
 import { Fletchables } from '../skilling/skills/fletching/fletchables';
 import resolveItems from '../util/resolveItems';
 import { allCollectionLogs } from './Collections';
@@ -24,97 +21,6 @@ import {
 	wintertodtCL
 } from './CollectionsExport';
 import { Eatables } from './eatables';
-
-export const warmGear = resolveItems([
-	'Staff of fire',
-	'Fire battlestaff',
-	'Lava battlestaff',
-	'Steam battlestaff',
-	'Smoke battlestaff',
-	'Mystic fire staff',
-	'Mystic lava staff',
-	'Mystic steam staff',
-	'Mystic smoke staff',
-	'Infernal axe',
-	'Infernal pickaxe',
-	'Infernal cape',
-	'Infernal max cape',
-	'Volcanic abyssal whip',
-	'Ale of the gods',
-	'Bruma torch',
-	'Tome of fire',
-	'Lit bug lantern',
-	'Pyromancer hood',
-	'Pyromancer garb',
-	'Pyromancer robe',
-	'Pyromancer boots',
-	'Warm gloves',
-	'Fire cape',
-	'Firemaking cape(t)',
-	'Firemaking cape',
-	'Santa hat',
-	'Santa mask',
-	'Santa jacket',
-	'Santa pantaloons',
-	'Santa gloves',
-	'Santa boots',
-	'Antisanta mask',
-	'Antisanta jacket',
-	'Antisanta pantaloons',
-	'Antisanta gloves',
-	'Antisanta boots',
-	'Bunny top',
-	'Bunny legs',
-	'Bunny paws',
-	'Bunny feet',
-	'Obsidian cape',
-	'Obsidian cape (r)',
-	'Gnome scarf',
-	'Jester scarf',
-	'Tri-jester scarf',
-	'Woolly scarf',
-	'Bobble scarf',
-	'Rainbow scarf',
-	'Clue hunter garb',
-	'Clue hunter trousers',
-	'Clue hunter gloves',
-	'Clue hunter boots',
-	'Clue hunter cloak',
-	'Chicken head',
-	'Chicken wings',
-	'Chicken legs',
-	'Chicken feet',
-	'Polar camo top',
-	'Polar camo legs',
-	'Wood camo top',
-	'Wood camo legs',
-	'Jungle camo top',
-	'Jungle camo legs',
-	'Desert camo top',
-	'Desert camo legs',
-	'Larupia hat',
-	'Larupia top',
-	'Larupia legs',
-	'Graahk headdress',
-	'Graahk top',
-	'Graahk legs',
-	'Kyatt hat',
-	'Kyatt top',
-	'Kyatt legs',
-	'Bearhead',
-	'Lumberjack hat',
-	'Fire tiara',
-	'Fire max hood',
-	'Firemaking hood',
-	'Infernal max hood',
-	'Black santa hat',
-	'Santa hat',
-	'Max cape',
-	'Gloves of silence',
-	'Fremennik gloves',
-	'Bomber jacket',
-	'Bomber cap'
-]) as number[];
 
 const ores = resolveItems([
 	'Copper ore',
@@ -171,25 +77,6 @@ const smithingMisc = resolveItems([
 	'Skeletal visage',
 	'Wyvern visage'
 ]);
-
-const gems = resolveItems([
-	'Amethyst',
-	'Sapphire',
-	'Opal',
-	'Jade',
-	'Red topaz',
-	'Emerald',
-	'Ruby',
-	'Diamond',
-	'Dragonstone',
-	'Onyx',
-	'Zenyte',
-	'Zenyte shard'
-]);
-
-const craftingItems = Craftables.flatMap(item => Object.keys(item.inputItems.bank).map(key => parseInt(key)));
-
-const craftingItemsSet = [...new Set(craftingItems)];
 
 const smithing = resolveItems([...ores, ...bars, ...smithingMisc]);
 
@@ -389,7 +276,7 @@ const bones = resolveItems([
 	'Zogre bones'
 ]);
 
-const fletchingItems = Fletchables.flatMap(item => Object.keys(item.inputItems.bank).map(key => parseInt(key)));
+const fletchingItems = Fletchables.flatMap(item => Object.keys(item.input.bank).map(key => parseInt(key)));
 
 const fletchingItemsSet = [...new Set(fletchingItems)];
 
@@ -413,16 +300,7 @@ const skilling = resolveItems([
 	'Mahogany plank',
 	'Raw shark',
 	'Grapes',
-	'Feather',
-	...fletchingItemsSet,
-	...seeds,
-	...bones,
-	...gems,
-	...bars,
-	...ores,
-	...herbs,
-	...smithingMisc,
-	...craftingItemsSet
+	'Feather'
 ]);
 
 const godwarsGear = resolveItems([
@@ -772,8 +650,6 @@ const herblore = resolveItems([
 	...herbs
 ]);
 
-const agility = resolveItems([...gracefulItems, 'Mark of grace', 'Amylase crystal']);
-
 const prayer = resolveItems([
 	'Ensouled goblin head',
 	'Ensouled monkey head',
@@ -906,11 +782,6 @@ export const baseFilters: Filterable[] = [
 		items: () => diaries
 	},
 	{
-		name: 'Crafting',
-		aliases: ['crafting', 'craft', 'cr'],
-		items: () => craftingItemsSet
-	},
-	{
 		name: 'Barrows',
 		aliases: ['barrows', 'br'],
 		items: () => barrows
@@ -974,11 +845,6 @@ export const baseFilters: Filterable[] = [
 		]
 	},
 	{
-		name: 'Compost',
-		aliases: ['compost', 'compostables'],
-		items: () => [...resolveItems(['Compost', 'Supercompost', 'Ultracompost']), ...resolveItems(superCompostables)]
-	},
-	{
 		name: 'Herblore',
 		aliases: ['herblore'],
 		items: () => herblore
@@ -987,11 +853,6 @@ export const baseFilters: Filterable[] = [
 		name: 'Fletching',
 		aliases: ['fletching', 'fletch'],
 		items: () => fletchingItemsSet
-	},
-	{
-		name: 'Agility',
-		aliases: ['agility', 'agi'],
-		items: () => agility
 	},
 	{
 		name: 'Prayer',
@@ -1022,11 +883,6 @@ export const baseFilters: Filterable[] = [
 		name: 'Wintertodt',
 		aliases: ['wintertodt', 'todt', 'wt'],
 		items: () => wintertodtCL
-	},
-	{
-		name: 'Warm gear',
-		aliases: ['warm gear', 'warm'],
-		items: () => warmGear
 	},
 	{
 		name: 'Tempoross',

@@ -1,9 +1,7 @@
 import { objectEntries, reduceNumByPercent } from 'e';
 import { KlasaClient, KlasaUser } from 'klasa';
 import { Bank } from 'oldschooljs';
-import { itemID } from 'oldschooljs/dist/util';
 
-import { Emoji } from '../../constants';
 import { Eatables } from '../../data/eatables';
 import { GearSetupType } from '../../gear';
 import { ClientSettings } from '../../settings/types/ClientSettings';
@@ -33,11 +31,6 @@ export default async function removeFoodFromUser({
 	const rawGear = user.rawGear();
 	const gearSetupsUsed = objectEntries(rawGear).filter(entry => attackStylesUsed.includes(entry[0]));
 	const reductions = [];
-	const elyUsed = gearSetupsUsed.some(entry => entry[1].shield?.item === itemID('Elysian spirit shield'));
-	if (elyUsed) {
-		totalHealingNeeded = reduceNumByPercent(totalHealingNeeded, 17.5);
-		reductions.push(`-17.5% for Ely ${Emoji.Ely}`);
-	}
 	if (
 		gearSetupsUsed.some(i => i[0] === 'melee') &&
 		rawGear.melee.hasEquipped(['Justiciar faceguard', 'Justiciar chestguard', 'Justiciar legguards'], true, true)

@@ -1,17 +1,16 @@
 import { Image } from 'canvas';
 import { KlasaUser } from 'klasa';
 import { Bank, MonsterKillOptions } from 'oldschooljs';
+import { AreaSkull } from 'oldschooljs/dist/meta/types';
 import { BeginnerCasket } from 'oldschooljs/dist/simulation/clues/Beginner';
 import { EasyCasket } from 'oldschooljs/dist/simulation/clues/Easy';
 import { EliteCasket } from 'oldschooljs/dist/simulation/clues/Elite';
 import { HardCasket } from 'oldschooljs/dist/simulation/clues/Hard';
 import { MasterCasket } from 'oldschooljs/dist/simulation/clues/Master';
 import { MediumCasket } from 'oldschooljs/dist/simulation/clues/Medium';
-import SimpleMonster from 'oldschooljs/dist/structures/SimpleMonster';
 
 import { BitField, PerkTier } from '../constants';
 import { GearSetupType, GearStat, OffenceGearStat } from '../gear/types';
-import { POHBoosts } from '../poh';
 import { LevelRequirements, SkillsEnum } from '../skilling/types';
 import { ArrayItemsResolved, ItemBank, Skills } from '../types';
 import { MonsterActivityTaskOptions } from '../types/minions';
@@ -69,6 +68,7 @@ export interface KillableMonster {
 	};
 	emoji?: string;
 	wildy?: boolean;
+	areaSkull?: AreaSkull;
 	difficultyRating?: number;
 	itemsRequired?: ArrayItemsResolved;
 	notifyDrops?: ArrayItemsResolved;
@@ -98,20 +98,12 @@ export interface KillableMonster {
 	 * The minimum *required* gear stats to fight this monster.
 	 */
 	minimumGearRequirements?: GearRequirements;
-	/**
-	 * Boosts for POH objects.
-	 */
-	pohBoosts?: POHBoosts;
+
 	defaultAttackStyles?: AttackStyles[];
 	disallowedAttackStyles?: AttackStyles[];
 	customMonsterHP?: number;
 	combatXpMultiplier?: number;
 	itemCost?: Consumable;
-	superior?: SimpleMonster;
-	slayerOnly?: boolean;
-	canBarrage?: boolean;
-	canCannon?: boolean;
-	cannonMulti?: boolean;
 	specialLoot?: (loot: Bank, user: KlasaUser, data: MonsterActivityTaskOptions) => Promise<void>;
 }
 /*
@@ -141,8 +133,8 @@ export interface AddMonsterXpParams {
 	monsterID: number;
 	quantity: number;
 	duration: number;
-	isOnTask: boolean;
-	taskQuantity: number | null;
+	isOnTask?: boolean;
+	taskQuantity?: number | null;
 	minimal?: boolean;
 	usingCannon?: boolean;
 	cannonMulti?: boolean;

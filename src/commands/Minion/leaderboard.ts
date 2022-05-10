@@ -5,14 +5,10 @@ import { CommandStore, KlasaMessage, util } from 'klasa';
 import { production } from '../../config';
 import { badges, Emoji } from '../../lib/constants';
 import { getCollectionItems } from '../../lib/data/Collections';
-import ClueTiers from '../../lib/minions/data/clueTiers';
 import { effectiveMonsters } from '../../lib/minions/data/killableMonsters';
 import { allOpenables } from '../../lib/openables';
 import { prisma } from '../../lib/settings/prisma';
-import { Minigames } from '../../lib/settings/settings';
 import Skills from '../../lib/skilling/skills';
-import Agility from '../../lib/skilling/skills/agility';
-import Hunter from '../../lib/skilling/skills/hunter/hunter';
 import { BotCommand } from '../../lib/structures/BotCommand';
 import { ItemBank } from '../../lib/types';
 import {
@@ -441,27 +437,15 @@ ORDER BY u.sacbanklength DESC LIMIT 10;`;
 		let key = '';
 		let openableName = '';
 
-		const clue = !name
+		const openable = !name
 			? undefined
-			: ClueTiers.find(
-					clue => stringMatches(clue.name, name) || clue.name.toLowerCase().includes(name.toLowerCase())
+			: allOpenables.find(
+					item => stringMatches(item.name, name) || item.name.toLowerCase().includes(name.toLowerCase())
 			  );
-
-		if (clue) {
-			entityID = clue.id;
-			key = 'clueScores';
-			openableName = clue.name;
-		} else {
-			const openable = !name
-				? undefined
-				: allOpenables.find(
-						item => stringMatches(item.name, name) || item.name.toLowerCase().includes(name.toLowerCase())
-				  );
-			if (openable) {
-				entityID = openable.id;
-				key = 'openable_scores';
-				openableName = openable.name;
-			}
+		if (openable) {
+			entityID = openable.id;
+			key = 'openable_scores';
+			openableName = openable.name;
 		}
 
 		if (entityID === -1) {
@@ -629,67 +613,6 @@ LIMIT 50;
 						.join('\n')
 				),
 			`${toTitleCase(inputType.toLowerCase())} Collection Log Leaderboard (${items.length} slots)`
-		);
-	}
-
-	async laps(msg: KlasaMessage, [courseName = '']: [string]) {
-		const course = Agility.Courses.find(course => course.aliases.some(alias => stringMatches(alias, courseName)));
-
-		if (!course) return msg.channel.send('Thats not a valid agility course.');
-
-		const data: { id: string; count: number }[] = await this.query(
-			`SELECT id, ("lapsScores"->>'${course.id}')::int as count
-				   FROM users
-				   WHERE "lapsScores"->>'${course.id}' IS NOT NULL
-				   ${msg.flagArgs.im ? ' AND "minion.ironman" = true ' : ''}
-				   ORDER BY count DESC LIMIT 50;`
-		);
-		this.doMenu(
-			msg,
-			util
-				.chunk(data, LB_PAGE_SIZE)
-				.map((subList, i) =>
-					subList
-						.map(
-							({ id, count }, j) =>
-								`${this.getPos(i, j)}**${this.getUsername(id)}:** ${count.toLocaleString()}`
-						)
-						.join('\n')
-				),
-			`${course.name} Laps Leaderboard`
-		);
-	}
-
-	async creatures(msg: KlasaMessage, [creatureName = '']: [string]) {
-		const creature = Hunter.Creatures.find(creature =>
-			creature.aliases.some(
-				alias => stringMatches(alias, creatureName) || stringMatches(alias.split(' ')[0], creatureName)
-			)
-		);
-
-		if (!creature)
-			return msg.channel.send(
-				`Thats not a valid creature. Valid creatures are: ${Hunter.Creatures.map(h => h.name).join(', ')}`
-			);
-
-		const query = `SELECT id, ("creatureScores"->>'${creature.id}')::int as count
-				   FROM users WHERE "creatureScores"->>'${creature.id}' IS NOT NULL
-				   ${msg.flagArgs.im ? ' AND "minion.ironman" = true ' : ''}
-				   ORDER BY count DESC LIMIT 50;`;
-		const data: { id: string; count: number }[] = await this.query(query);
-		this.doMenu(
-			msg,
-			util
-				.chunk(data, LB_PAGE_SIZE)
-				.map((subList, i) =>
-					subList
-						.map(
-							({ id, count }, j) =>
-								`${this.getPos(i, j)}**${this.getUsername(id)}:** ${count.toLocaleString()}`
-						)
-						.join('\n')
-				),
-			`Catch Leaderboard for ${creature.name}`
 		);
 	}
 

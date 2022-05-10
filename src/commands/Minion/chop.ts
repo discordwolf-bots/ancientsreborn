@@ -1,32 +1,26 @@
 import { reduceNumByPercent } from 'e';
 import { CommandStore, KlasaMessage } from 'klasa';
 
-import { Favours, gotFavour } from '../../lib/minions/data/kourendFavour';
 import { minionNotBusy, requiresMinion } from '../../lib/minions/decorators';
 import { UserSettings } from '../../lib/settings/types/UserSettings';
 import Woodcutting from '../../lib/skilling/skills/woodcutting';
 import { SkillsEnum } from '../../lib/skilling/types';
 import { BotCommand } from '../../lib/structures/BotCommand';
-import { WoodcuttingActivityTaskOptions } from '../../lib/types/minions';
+import { ProductionActivityTaskOptions } from '../../lib/types/minions';
 import { determineScaledLogTime, formatDuration, itemNameFromID, stringMatches } from '../../lib/util';
 import addSubTaskToActivityTask from '../../lib/util/addSubTaskToActivityTask';
 import itemID from '../../lib/util/itemID';
 
 const axes = [
 	{
-		id: itemID('Crystal axe'),
-		reductionPercent: 12,
-		wcLvl: 61
+		id: itemID('Master Hatchet'),
+		reductionPercent: 10,
+		wcLvl: 30
 	},
 	{
-		id: itemID('Infernal axe'),
-		reductionPercent: 9,
-		wcLvl: 61
-	},
-	{
-		id: itemID('Dragon axe'),
-		reductionPercent: 9,
-		wcLvl: 61
+		id: itemID('Mythical Hatchet'),
+		reductionPercent: 15,
+		wcLvl: 60
 	}
 ];
 
@@ -54,7 +48,7 @@ export default class extends BotCommand {
 			log =>
 				stringMatches(log.name, name) ||
 				stringMatches(log.name.split(' ')[0], name) ||
-				log.aliases?.some(a => stringMatches(a, name))
+				log.alias?.some(a => stringMatches(a, name))
 		);
 
 		if (!log) {
@@ -68,23 +62,14 @@ export default class extends BotCommand {
 		}
 
 		const QP = msg.author.settings.get(UserSettings.QP);
-		if (QP < log.qpRequired) {
-			return msg.channel.send(`${msg.author.minionName} needs ${log.qpRequired} QP to cut ${log.name}.`);
-		}
-
-		const [hasFavour, requiredPoints] = gotFavour(msg.author, Favours.Hosidius, 75);
-		if (!hasFavour && log.name === 'Redwood Logs') {
+		if (log.cbRequired && QP < log.cbRequired) {
 			return msg.channel.send(
-				`${msg.author.minionName} needs ${requiredPoints}% Hosidius Favour to chop Redwood at the Woodcutting Guild!`
+				`${msg.author.minionName} needs to be Combat Level ${log.cbRequired} to cut ${log.name}.`
 			);
 		}
 
 		// Calculate the time it takes to chop a single log of this type, at this persons level.
-		let timetoChop = determineScaledLogTime(
-			log!.xp,
-			log.respawnTime,
-			msg.author.skillLevel(SkillsEnum.Woodcutting)
-		);
+		let timetoChop = determineScaledLogTime(log!.xp, 0.5, msg.author.skillLevel(SkillsEnum.Woodcutting));
 
 		// If the user has an axe apply boost
 		const boosts = [];
@@ -118,8 +103,8 @@ export default class extends BotCommand {
 			);
 		}
 
-		await addSubTaskToActivityTask<WoodcuttingActivityTaskOptions>({
-			logID: log.id,
+		await addSubTaskToActivityTask<ProductionActivityTaskOptions>({
+			produceID: log.id,
 			userID: msg.author.id,
 			channelID: msg.channel.id,
 			quantity,

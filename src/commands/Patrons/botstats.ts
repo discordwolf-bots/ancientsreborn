@@ -3,7 +3,6 @@ import { Monsters } from 'oldschooljs';
 
 import { PerkTier } from '../../lib/constants';
 import backgroundImages from '../../lib/minions/data/bankBackgrounds';
-import ClueTiers from '../../lib/minions/data/clueTiers';
 import { BotCommand } from '../../lib/structures/BotCommand';
 import { ItemBank } from '../../lib/types';
 import PostgresProvider from '../../providers/postgres';
@@ -110,32 +109,6 @@ GROUP BY "bankBackground";`);
 				.map(([monID, qty]) => {
 					return `**${Monsters.get(parseInt(monID))?.name}:** ${qty.toLocaleString()}`;
 				})
-				.join('\n')
-		);
-	}
-
-	async clues(msg: KlasaMessage) {
-		const totalBank: { [key: string]: number } = {};
-
-		const res: any = await this._query(
-			'SELECT ARRAY(SELECT "clueScores" FROM users WHERE "clueScores"::text <> \'{}\'::text);'
-		);
-
-		const banks: ItemBank[] = res[0].array;
-
-		banks.map(bank => {
-			for (const [id, qty] of Object.entries(bank)) {
-				if (!totalBank[id]) totalBank[id] = qty;
-				else totalBank[id] += qty;
-			}
-		});
-
-		return msg.channel.send(
-			Object.entries(totalBank)
-				.map(
-					([clueID, qty]) =>
-						`**${ClueTiers.find(t => t.id === parseInt(clueID))?.name}:** ${qty.toLocaleString()}`
-				)
 				.join('\n')
 		);
 	}

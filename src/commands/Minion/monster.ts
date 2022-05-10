@@ -1,17 +1,12 @@
 import { MessageAttachment } from 'discord.js';
 import { calcWhatPercent, increaseNumByPercent, reduceNumByPercent, round, Time } from 'e';
 import { CommandStore, KlasaMessage } from 'klasa';
-import { Monsters } from 'oldschooljs';
-import { SkillsEnum } from 'oldschooljs/dist/constants';
-import { MonsterAttribute } from 'oldschooljs/dist/meta/monsterData';
 
 import killableMonsters from '../../lib/minions/data/killableMonsters';
-import { Favours, gotFavour } from '../../lib/minions/data/kourendFavour';
 import { requiresMinion } from '../../lib/minions/decorators';
 import { resolveAttackStyles } from '../../lib/minions/functions';
 import calculateMonsterFood from '../../lib/minions/functions/calculateMonsterFood';
 import reducedTimeFromKC from '../../lib/minions/functions/reducedTimeFromKC';
-import { calcPOHBoosts } from '../../lib/poh';
 import { UserSettings } from '../../lib/settings/types/UserSettings';
 import { BotCommand } from '../../lib/structures/BotCommand';
 import {
@@ -20,7 +15,6 @@ import {
 	formatItemBoosts,
 	formatItemCosts,
 	formatItemReqs,
-	formatPohBoosts,
 	itemNameFromID,
 	stringMatches
 } from '../../lib/util';
@@ -58,7 +52,6 @@ export default class MinionCommand extends BotCommand {
 				]
 			});
 		}
-		const osjsMon = Monsters.get(monster.id);
 		const [, , attackStyles] = resolveAttackStyles(user, {
 			monsterID: monster.id
 		});
@@ -76,35 +69,6 @@ export default class MinionCommand extends BotCommand {
 		}
 
 		let isDragon = false;
-		if (monster.name.toLowerCase() !== 'vorkath' && osjsMon?.data?.attributes?.includes(MonsterAttribute.Dragon)) {
-			isDragon = true;
-			if (
-				msg.author.hasItemEquippedOrInBank('Dragon hunter lance') &&
-				!attackStyles.includes(SkillsEnum.Ranged) &&
-				!attackStyles.includes(SkillsEnum.Magic)
-			) {
-				timeToFinish = reduceNumByPercent(timeToFinish, 15);
-				ownedBoostItems.push('Dragon hunter lance');
-				totalItemBoost += 15;
-			} else if (
-				msg.author.hasItemEquippedOrInBank('Dragon hunter crossbow') &&
-				attackStyles.includes(SkillsEnum.Ranged)
-			) {
-				timeToFinish = reduceNumByPercent(timeToFinish, 15);
-				ownedBoostItems.push('Dragon hunter crossbow');
-				totalItemBoost += 15;
-			}
-		}
-		// poh boosts
-		if (monster.pohBoosts) {
-			const [boostPercent, messages] = calcPOHBoosts(await msg.author.getPOH(), monster.pohBoosts);
-			if (boostPercent > 0) {
-				timeToFinish = reduceNumByPercent(timeToFinish, boostPercent);
-				let boostString = messages.join(' ').replace(RegExp('[0-9]{2}% for '), '');
-				ownedBoostItems.push(`${boostString}`);
-				totalItemBoost += boostPercent;
-			}
-		}
 		// combat stat boosts
 		const skillTotal = addArrayOfNumbers(attackStyles.map(s => user.skillLevel(s)));
 
@@ -138,21 +102,8 @@ export default class MinionCommand extends BotCommand {
 
 		const QP = msg.author.settings.get(UserSettings.QP);
 
-		str.push(`**Barrage/Burst**: ${monster.canBarrage ? 'Yes' : 'No'}`);
-		str.push(
-			`**Cannon**: ${monster.canCannon ? `Yes, ${monster.cannonMulti ? 'multi' : 'single'} combat area` : 'No'}\n`
-		);
-
 		if (monster.qpRequired) {
 			str.push(`${monster.name} requires **${monster.qpRequired}qp** to kill, and you have ${QP}qp.\n`);
-		}
-		if (stringMatches(name, 'shaman') || stringMatches(name, 'lizardman shaman')) {
-			const [hasFavour] = gotFavour(user, Favours.Shayzien, 100);
-			if (!hasFavour) {
-				str.push('You require 100% Shayzien favour\n');
-			} else {
-				str.push('You meet the required 100% Shayzien favour\n');
-			}
 		}
 		let itemRequirements = [];
 		if (monster.itemsRequired && monster.itemsRequired.length > 0) {
@@ -184,15 +135,6 @@ export default class MinionCommand extends BotCommand {
 		}
 		if (monster.itemInBankBoosts) {
 			totalBoost.push(`${formatItemBoosts(monster.itemInBankBoosts)}`);
-		}
-		if (monster.pohBoosts) {
-			totalBoost.push(
-				`${formatPohBoosts(monster.pohBoosts)
-					.replace(RegExp('(Pool:)'), '')
-					.replace(')', '')
-					.replace('(', '')
-					.replace('\n', '')}`
-			);
 		}
 		if (totalBoost.length > 0) {
 			str.push(
