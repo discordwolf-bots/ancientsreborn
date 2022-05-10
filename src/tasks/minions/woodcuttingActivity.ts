@@ -1,20 +1,20 @@
 import { Task } from 'klasa';
 import { Bank } from 'oldschooljs';
 
+import { baseRewardMultiplierSkilling, baseXpMultiplier } from '../../config';
 import Woodcutting from '../../lib/skilling/skills/woodcutting';
 import { SkillsEnum } from '../../lib/skilling/types';
-import { WoodcuttingActivityTaskOptions } from '../../lib/types/minions';
+import { GatheringActivityTaskOptions } from '../../lib/types/minions';
 import { handleTripFinish } from '../../lib/util/handleTripFinish';
 
 export default class extends Task {
-	async run(data: WoodcuttingActivityTaskOptions) {
-		const { logID, quantity, userID, channelID, duration } = data;
+	async run(data: GatheringActivityTaskOptions) {
+		const { resourceID, quantity, userID, channelID, duration } = data;
 		const user = await this.client.fetchUser(userID);
 
-		const log = Woodcutting.Logs.find(Log => Log.id === logID)!;
+		const log = Woodcutting.Logs.find(Log => Log.id === resourceID)!;
 
-		let xpReceived = quantity * log.xp;
-		let bonusXP = 0;
+		let xpReceived = quantity * log.xp * baseXpMultiplier;
 
 		const xpRes = await user.addXP({
 			skillName: SkillsEnum.Woodcutting,
@@ -23,14 +23,10 @@ export default class extends Task {
 		});
 
 		let loot = new Bank({
-			[log.id]: quantity
+			[log.id]: quantity * baseRewardMultiplierSkilling
 		});
 
 		let str = `${user}, ${user.minionName} finished woodcutting. ${xpRes}`;
-
-		if (bonusXP > 0) {
-			str += `. **Bonus XP:** ${bonusXP.toLocaleString()}`;
-		}
 
 		str += `\nYou received ${loot}.`;
 
